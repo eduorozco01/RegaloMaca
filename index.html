@@ -432,43 +432,134 @@
                   </defs>
                   <!-- Mar -->
                   <rect width="800" height="560" fill="url(#sea-dither)"/>
-                  
-                  <!-- Silueta Península Ibérica (España y Portugal) en estilo pixel/retro suave -->
-                  <path class="land-path" d="M180,80 L440,70 L540,110 L620,130 L660,180 L630,220 L660,260 L620,330 L550,380 L480,450 L390,470 L300,460 L240,430 L210,360 L210,240 L170,160 L180,80 Z" fill="#fffdf7" stroke="#1d2b4a" stroke-width="3"/>
-                  
-                  <!-- Frontera Portugal punteada -->
-                  <path d="M260,140 L280,240 L260,340 L300,430" fill="none" stroke="#3b8cff" stroke-width="2" stroke-dasharray="4,4"/>
-                  
-                  <!-- Islas Baleares -->
-                  <path class="land-path" d="M680,270 L720,260 L730,285 L690,295 Z" fill="#fffdf7" stroke="#1d2b4a" stroke-width="2"/>
-                  <path class="land-path" d="M740,240 L765,230 L770,250 L745,260 Z" fill="#fffdf7" stroke="#1d2b4a" stroke-width="2"/>
-                  
-                  <!-- Olas decorativas pixel -->
-                  <text x="100" y="280" font-family="'DotGothic16', monospace" font-size="14" fill="#3b8cff" opacity="0.5">~ ~ Atlántico ~ ~</text>
-                  <text x="650" y="420" font-family="'DotGothic16', monospace" font-size="14" fill="#3b8cff" opacity="0.5">~ ~ Mediterráneo ~ ~</text>
-                  <text x="320" y="50" font-family="'DotGothic16', monospace" font-size="14" fill="#3b8cff" opacity="0.5">~ Cantábrico ~</text>
-                  
+
+                  <!-- Sombra sólida pixel de la tierra -->
+                  <path d="M 148,84 Q 130,110 120,135 Q 120,165 145,175 Q 155,230 155,270 Q 140,320 145,355 Q 125,410 135,445 Q 155,455 185,445 Q 235,445 255,465 Q 275,485 305,485 Q 325,465 355,465 Q 385,475 415,465 Q 465,435 505,415 Q 545,385 575,325 Q 605,285 595,245 Q 625,195 645,155 Q 615,145 565,135 Q 495,125 435,105 Q 375,95 305,95 Q 225,85 148,84 Z" fill="#bce0ef" opacity="0.5" transform="translate(6, 6)"/>
+
+                  <!-- Silueta geográfica detallada de la Península Ibérica -->
+                  <!-- Norte (Galicia, Asturias, Cantabria, País Vasco) -->
+                  <!-- Pirineos, Cataluña, Golfo de Valencia, Murcia, Andalucía, Estrecho, Golfo de Cádiz, Portugal -->
+                  <path class="land-path" d="
+                    M 145,95
+                    C 160,82 195,85 240,88
+                    C 285,92 350,96 410,105
+                    C 460,112 510,120 545,130
+                    C 570,122 590,126 610,140
+                    C 625,150 630,165 620,180
+                    C 610,195 600,215 605,235
+                    C 610,255 595,280 575,310
+                    C 560,335 545,360 520,380
+                    C 495,400 460,420 425,445
+                    C 390,468 360,465 330,460
+                    C 315,458 305,468 290,472
+                    C 270,478 250,460 230,450
+                    C 200,442 165,440 145,435
+                    C 130,432 125,415 130,395
+                    C 138,370 142,340 145,310
+                    C 148,275 145,235 140,190
+                    C 135,160 115,140 120,115
+                    C 125,98 135,92 145,95 Z"
+                    fill="#fffdf7" stroke="#1d2b4a" stroke-width="3"
+                  />
+
+                  <!-- Frontera de Portugal (Línea punteada característica) -->
+                  <path d="
+                    M 175,140
+                    C 195,145 205,170 205,200
+                    C 205,240 195,270 205,310
+                    C 215,350 205,390 220,435"
+                    fill="none" stroke="#3b8cff" stroke-width="2" stroke-dasharray="5,4"
+                  />
+
+                  <!-- Trazado de ríos emblemáticos en azul pastel -->
+                  <!-- Guadalquivir (pasa por Sevilla y Córdoba) -->
+                  <path d="M 265,455 Q 315,435 345,420 Q 380,410 420,405" fill="none" stroke="#a5d2eb" stroke-width="2.5" stroke-linecap="round"/>
+                  <!-- Tajo (pasa cerca de Madrid) -->
+                  <path d="M 145,315 Q 260,310 350,290 Q 420,270 460,265" fill="none" stroke="#a5d2eb" stroke-width="2" stroke-linecap="round"/>
+
+                  <!-- Islas Baleares con forma real (Mallorca, Menorca, Ibiza) -->
+                  <g transform="translate(610, 220)">
+                    <!-- Menorca -->
+                    <path class="land-path" d="M 95,-10 C 105,-18 120,-12 115,-2 C 110,5 98,2 95,-10 Z" fill="#fffdf7" stroke="#1d2b4a" stroke-width="2"/>
+                    <!-- Mallorca -->
+                    <path class="land-path" d="M 45,5 C 65,-8 85,8 80,25 C 75,40 50,42 40,28 C 32,15 35,10 45,5 Z" fill="#fffdf7" stroke="#1d2b4a" stroke-width="2.5"/>
+                    <!-- Ibiza & Formentera -->
+                    <path class="land-path" d="M 8,42 C 16,36 24,42 20,50 C 16,56 6,52 8,42 Z" fill="#fffdf7" stroke="#1d2b4a" stroke-width="2"/>
+                    <path class="land-path" d="M 18,58 C 22,55 26,58 24,62 C 22,65 17,63 18,58 Z" fill="#fffdf7" stroke="#1d2b4a" stroke-width="1.5"/>
+                  </g>
+
+                  <!-- Pequeñas montañitas pixel decorativas (Sierra Nevada y Sistema Central) -->
+                  <g fill="#cfe6f0" stroke="#1d2b4a" stroke-width="1.5">
+                    <!-- Sistema Central -->
+                    <polygon points="370,255 380,240 390,255"/>
+                    <polygon points="385,255 395,238 405,255"/>
+                    <polygon points="400,255 410,242 420,255"/>
+                    <!-- Sierra Nevada -->
+                    <polygon points="360,435 372,420 384,435"/>
+                    <polygon points="378,435 390,416 402,435"/>
+                  </g>
+
+                  <!-- Textos cartográficos retro -->
+                  <text x="60" y="240" font-family="'DotGothic16', monospace" font-size="13" fill="#3b8cff" opacity="0.6">~ OCÉANO ATLÁNTICO ~</text>
+                  <text x="590" y="440" font-family="'DotGothic16', monospace" font-size="13" fill="#3b8cff" opacity="0.6">~ MAR MEDITERRÁNEO ~</text>
+                  <text x="290" y="65" font-family="'DotGothic16', monospace" font-size="13" fill="#3b8cff" opacity="0.6">~ MAR CANTÁBRICO ~</text>
+                  <text x="245" y="485" font-family="'DotGothic16', monospace" font-size="11" fill="#1d2b4a" opacity="0.45">Estrecho de Gibraltar</text>
+
                   <!-- Rosa de los vientos pixel -->
-                  <g transform="translate(100, 100)">
-                    <circle cx="0" cy="0" r="24" fill="#fffdf7" stroke="#1d2b4a" stroke-width="2"/>
-                    <path d="M0,-20 L4,-4 L20,0 L4,4 L0,20 L-4,4 L-20,0 L-4,-4 Z" fill="#ff9ebb" stroke="#1d2b4a" stroke-width="1.5"/>
-                    <text x="-4" y="-24" font-family="'DotGothic16', monospace" font-size="11" font-weight="bold" fill="#1d2b4a">N</text>
+                  <g transform="translate(85, 95)">
+                    <circle cx="0" cy="0" r="22" fill="#fffdf7" stroke="#1d2b4a" stroke-width="2"/>
+                    <path d="M0,-18 L3,-3 L18,0 L3,3 L0,18 L-3,3 L-18,0 L-3,-3 Z" fill="#ff9ebb" stroke="#1d2b4a" stroke-width="1.5"/>
+                    <text x="-4" y="-22" font-family="'DotGothic16', monospace" font-size="11" font-weight="bold" fill="#1d2b4a">N</text>
                   </g>
                 </svg>
 
                 <svg id="svg-map-europa" class="retro-map-svg" viewBox="0 0 800 560" preserveAspectRatio="xMidYMid meet" style="display: none;">
                   <!-- Mar de Europa -->
                   <rect width="800" height="560" fill="url(#sea-dither)"/>
-                  
-                  <!-- Silueta Europa Occidental (Francia, Países Bajos, etc.) -->
-                  <path class="land-path" d="M120,480 L280,390 L340,350 L340,240 L380,180 L440,150 L520,130 L550,190 L510,240 L530,320 L470,410 L370,460 L240,510 Z" fill="#fffdf7" stroke="#1d2b4a" stroke-width="3"/>
-                  <!-- Países Bajos & costa norte -->
-                  <path class="land-path" d="M460,130 L540,110 L560,150 L500,170 Z" fill="#fffdf7" stroke="#1d2b4a" stroke-width="2"/>
-                  <!-- Reino Unido referencia -->
-                  <path class="land-path" d="M260,160 L320,110 L350,160 L300,240 L250,210 Z" fill="#eaf3f7" stroke="#1d2b4a" stroke-width="2" opacity="0.7"/>
 
-                  <text x="180" y="320" font-family="'DotGothic16', monospace" font-size="14" fill="#3b8cff" opacity="0.5">~ ~ Océano Atlántico ~ ~</text>
-                  <text x="440" y="470" font-family="'DotGothic16', monospace" font-size="14" fill="#3b8cff" opacity="0.5">~ ~ Mar Mediterráneo ~ ~</text>
+                  <!-- Sombra sólida pixel -->
+                  <path d="M 230,480 Q 290,420 320,380 Q 330,300 370,260 Q 420,200 480,180 Q 560,180 580,240 Q 550,340 500,420 Q 420,470 320,490 Z" fill="#bce0ef" opacity="0.5" transform="translate(6, 6)"/>
+
+                  <!-- Silueta detallada Europa Occidental (Francia + Países Bajos + Bélgica) -->
+                  <path class="land-path" d="
+                    M 260,450
+                    C 285,420 310,380 320,340
+                    C 325,300 310,270 280,260
+                    C 240,250 215,260 210,240
+                    C 205,220 230,210 260,215
+                    C 285,220 310,210 320,195
+                    C 335,170 355,160 380,165
+                    C 400,170 425,160 445,140
+                    C 460,120 485,110 510,125
+                    C 525,140 515,165 505,185
+                    C 515,210 535,225 540,255
+                    C 545,295 525,335 505,375
+                    C 480,415 450,445 410,460
+                    C 370,475 310,470 260,450 Z"
+                    fill="#fffdf7" stroke="#1d2b4a" stroke-width="3"
+                  />
+
+                  <!-- Países Bajos con golfo del IJsselmeer -->
+                  <path class="land-path" d="
+                    M 470,130
+                    C 490,110 520,105 540,120
+                    C 555,135 550,160 535,170
+                    C 515,165 500,150 470,130 Z"
+                    fill="#fffdf7" stroke="#1d2b4a" stroke-width="2"
+                  />
+
+                  <!-- Costa inglesa de referencia arriba a la izquierda -->
+                  <path class="land-path" d="
+                    M 280,180
+                    C 300,150 330,130 360,140
+                    C 380,155 365,185 340,200
+                    C 310,215 285,200 280,180 Z"
+                    fill="#eaf3f7" stroke="#1d2b4a" stroke-width="2" opacity="0.6"
+                  />
+
+                  <text x="130" y="340" font-family="'DotGothic16', monospace" font-size="13" fill="#3b8cff" opacity="0.6">~ OCÉANO ATLÁNTICO ~</text>
+                  <text x="440" y="500" font-family="'DotGothic16', monospace" font-size="13" fill="#3b8cff" opacity="0.6">~ MAR MEDITERRÁNEO ~</text>
+                  <text x="330" y="160" font-family="'DotGothic16', monospace" font-size="11" fill="#3b8cff" opacity="0.5">Canal de la Mancha</text>
                 </svg>
 
                 <!-- Contenedor dinámico de los Pines -->
