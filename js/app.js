@@ -136,29 +136,58 @@
       if (textoEl && cfg.actividad.texto) textoEl.textContent = cfg.actividad.texto;
     }
 
-    // Contador de días juntos
-    var contadorEl = document.getElementById("contador-dias");
-    if (contadorEl) {
-      var fechaStr = cfg.fechaInicio || "2021-10-29";
-      var partes = fechaStr.split("-");
-      var fInicio = new Date(parseInt(partes[0], 10), parseInt(partes[1], 10) - 1, parseInt(partes[2], 10));
+    // ── Contador en Vivo (Días, Horas, Minutos, Segundos) ──
+    // Fecha de inicio: 1 de noviembre de 2021
+    var fechaInicio = new Date(cfg.fechaInicio || "2021-11-01T00:00:00");
+    var elDias  = document.getElementById("cnt-dias");
+    var elHoras = document.getElementById("cnt-horas");
+    var elMins  = document.getElementById("cnt-mins");
+    var elSegs  = document.getElementById("cnt-segs");
+
+    function actualizarContadorEnVivo() {
       var ahora = new Date();
-      var diffMs = ahora.getTime() - fInicio.getTime();
-      var dias = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
-      contadorEl.textContent = dias.toLocaleString("es-ES");
+      var diffMs = ahora.getTime() - fechaInicio.getTime();
+      if (diffMs < 0) diffMs = 0;
+
+      var totalSegs = Math.floor(diffMs / 1000);
+      var segs  = totalSegs % 60;
+      var totalMins = Math.floor(totalSegs / 60);
+      var mins  = totalMins % 60;
+      var totalHoras = Math.floor(totalMins / 60);
+      var horas = totalHoras % 24;
+      var dias  = Math.floor(totalHoras / 24);
+
+      if (elDias)  elDias.textContent  = dias.toLocaleString("es-ES");
+      if (elHoras) elHoras.textContent = String(horas).padStart(2, "0");
+      if (elMins)  elMins.textContent  = String(mins).padStart(2, "0");
+      if (elSegs)  elSegs.textContent  = String(segs).padStart(2, "0");
     }
 
-    // Mini tira de la línea del tiempo en portada
+    actualizarContadorEnVivo();
+    setInterval(actualizarContadorEnVivo, 1000);
+
+    // ── Línea del tiempo en portada (Síntesis limpia de hitos por año) ──
     var miniDots = document.getElementById("mini-dots-container");
-    var timeline = window.TIMELINE || [];
-    if (miniDots && timeline.length > 0) {
+    if (miniDots) {
       miniDots.innerHTML = "";
-      timeline.forEach(function (h) {
+      
+      // Creamos 7 hitos representativos (un hito por año + el especial de hoy)
+      // para que quede perfectamente encajado sin salirse de los límites
+      var hitosPortada = [
+        { label: "2021: Zahora", year: "2021" },
+        { label: "2022: Primeros curros", year: "2022" },
+        { label: "2023: París & Madrid", year: "2023" },
+        { label: "2024: Viajes & Halloween", year: "2024" },
+        { label: "2025: Feria & Recuerdos", year: "2025" },
+        { label: "2026: Nueva etapa", year: "2026" },
+        { label: "Hoy ♥: PhotoBooth", year: "hoy", isHoy: true }
+      ];
+
+      hitosPortada.forEach(function (h) {
         var dot = document.createElement("div");
         dot.className = "mini-dot";
-        if (h.tipo === "hoy") dot.classList.add("hoy");
-        if (h.tipo === "futuro") dot.classList.add("futuro");
-        dot.setAttribute("title", h.fecha + ": " + h.titulo);
+        if (h.isHoy) dot.classList.add("hoy");
+        dot.setAttribute("title", h.label);
         miniDots.appendChild(dot);
       });
     }

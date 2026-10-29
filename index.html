@@ -25,7 +25,16 @@
 
     <div class="entrada-caja">
       <div style="font-size: 13px; color: var(--linea); margin-bottom: 6px;">✦ ✧ ✦ ✧ ✦</div>
-      <h1 class="entrada-titulo"><span class="brand-five">5</span> años</h1>
+      <h1 class="entrada-titulo">
+        <svg class="pixel-five-svg" viewBox="0 0 14 18" width="22" height="28" fill="var(--borde-oscuro)" aria-label="5">
+          <rect x="0" y="0" width="14" height="4"/>
+          <rect x="0" y="4" width="4" height="5"/>
+          <rect x="0" y="7" width="12" height="4"/>
+          <rect x="10" y="9" width="4" height="6"/>
+          <rect x="0" y="14" width="13" height="4"/>
+        </svg>
+        <span>años</span>
+      </h1>
       <p class="entrada-sub">de aventuras juntos</p>
 
       <input
@@ -62,7 +71,16 @@
 
           <!-- Branding / Título del sitio -->
           <div class="site-branding">
-            <h2 class="site-title"><span class="brand-five">5</span> años ♥</h2>
+            <h2 class="site-title">
+              <svg class="pixel-five-svg" viewBox="0 0 14 18" width="18" height="23" fill="var(--borde-oscuro)" aria-label="5">
+                <rect x="0" y="0" width="14" height="4"/>
+                <rect x="0" y="4" width="4" height="5"/>
+                <rect x="0" y="7" width="12" height="4"/>
+                <rect x="10" y="9" width="4" height="6"/>
+                <rect x="0" y="14" width="13" height="4"/>
+              </svg>
+              <span>años ♥</span>
+            </h2>
             <div class="site-subtitle">nuestro rincón</div>
           </div>
 
@@ -230,26 +248,55 @@
               </div>
             </div>
 
-            <!-- FILA DE AÑADIDOS EN PORTADA: CONTADOR DE DÍAS + MINI TIRA TIMELINE -->
+            <!-- FILA DE AÑADIDOS EN PORTADA: CONTADOR EN VIVO + LÍNEA DEL TIEMPO -->
             <div class="portada-extras-row">
 
-              <!-- Contador de días juntos -->
-              <div class="counter-card">
-                <div class="counter-number" id="contador-dias">—</div>
-                <div class="counter-label">
-                  <strong>días juntos</strong><br>
-                  y sumando cada segundo ♥ ∞
+              <!-- Contador dinámico en vivo (días, horas, minutos, segundos) -->
+              <div class="counter-card" title="Contador en tiempo real desde el 1 de noviembre de 2021">
+                <div class="counter-time-grid">
+                  <div class="counter-unit">
+                    <span class="unit-num" id="cnt-dias">1824</span>
+                    <span class="unit-lbl">días</span>
+                  </div>
+                  <div class="counter-colon">:</div>
+                  <div class="counter-unit">
+                    <span class="unit-num" id="cnt-horas">00</span>
+                    <span class="unit-lbl">hs</span>
+                  </div>
+                  <div class="counter-colon">:</div>
+                  <div class="counter-unit">
+                    <span class="unit-num" id="cnt-mins">00</span>
+                    <span class="unit-lbl">min</span>
+                  </div>
+                  <div class="counter-colon">:</div>
+                  <div class="counter-unit">
+                    <span class="unit-num" id="cnt-segs">00</span>
+                    <span class="unit-lbl">seg</span>
+                  </div>
+                </div>
+                <div class="counter-caption">
+                  <strong>juntos desde el 1 de nov</strong><br>
+                  cada segundo a tu lado ♥ ∞
                 </div>
               </div>
 
-              <!-- Mini tira clicable de la línea del tiempo -->
+              <!-- Vista previa limpia de la línea del tiempo (sin desbordes) -->
               <div class="mini-timeline-strip" id="mini-timeline-strip" role="button" tabindex="0" title="Ver la línea del tiempo completa">
                 <div class="mini-strip-header">
-                  <span>tira del tiempo</span>
-                  <span style="color: var(--linea); font-size: 11px;">ver completa →</span>
+                  <span style="font-family: var(--font-title); font-size: 14px;">Línea del tiempo ✧</span>
+                  <span style="color: var(--linea); font-size: 11px; font-weight: bold;">abrir completa →</span>
                 </div>
                 <div class="mini-dots-row" id="mini-dots-container">
-                  <!-- Puntos generados dinámicamente con JS -->
+                  <!-- Puntos síntesis por año bien espaciados y contenidos -->
+                </div>
+                <div class="mini-years-legend">
+                  <span>'21</span>
+                  <span>'22</span>
+                  <span>'23</span>
+                  <span>'24</span>
+                  <span>'25</span>
+                  <span>'26</span>
+                  <span style="color:var(--rosa); font-weight:bold;">hoy ♥</span>
                 </div>
               </div>
 

@@ -1,32 +1,20 @@
 /*  ═══════════════════════════════════════════════════════════════
- *  config.js — Configuración general de la web (v2)
- *  ═══════════════════════════════════════════════════════════════
- *
- *  CÓMO EDITAR:
- *  - «fechaInicio»: Fecha en formato "AAAA-MM-DD" en que empezó
- *    vuestra historia. Se usa para calcular automáticamente los
- *    días juntos en el contador ("Llevamos X días juntos ♥ ∞").
- *  - «contrasena»: Contraseña para entrar (si la dejas vacía "",
- *    se entra directamente sin pedir contraseña).
- *  - «mensajeBienvenida»: El texto/poema central en la portada.
- *  - «actividad»: Novedad que sale en la caja de actividad.
+ *  config.js — Configuración general de la web
  *  ═══════════════════════════════════════════════════════════════ */
 
 window.CONFIG = {
 
-  /* Fecha en que empezó vuestra relación (formato AAAA-MM-DD)
-     Ejemplo: "2021-10-29" calculará exactamente los días transcurridos */
-  fechaInicio: "2021-10-29",
+  /* Fecha oficial en que empezó todo: 1 de noviembre de 2021 */
+  fechaInicio: "2021-11-01T00:00:00",
 
-  /* Contraseña de la pantalla de entrada.
-     Si está vacía (""), el botón abre directamente. */
+  /* Contraseña de la pantalla de entrada (vacía = acceso libre) */
   contrasena: "",
 
-  /* Nombre de tu pareja (se usa en títulos y textos) */
+  /* Nombre de tu pareja */
   nombrePareja: "mi amor",
 
   /* Fecha del aniversario visible */
-  fechaAniversario: "29 de octubre",
+  fechaAniversario: "1 de noviembre",
 
   /* Años celebrados */
   anosJuntos: 5,
