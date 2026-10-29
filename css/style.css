@@ -1,0 +1,1262 @@
+/* ═══════════════════════════════════════════════════════════════
+ *  style.css — Aniversario v2 (Neocities × Tamagotchi × Lamb Chapel)
+ * ═══════════════════════════════════════════════════════════════ */
+
+/* ── Google Fonts ─────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=DotGothic16&family=Pixelify+Sans:wght@400;600;700&display=swap');
+
+/* ── Variables de paleta y medidas ───────────────────────────── */
+:root {
+  --bg:           #e5edf2;   /* fondo general con textura dither */
+  --panel:        #cfe6f0;   /* azul suave pastel */
+  --panel-light:  #dcf0f7;   /* azul muy suave */
+  --linea:        #3b8cff;   /* azul vivo característico */
+  --borde-oscuro: #1d2b4a;   /* color de anclaje oscuro para solidez */
+  --texto:        #1d2b4a;   /* texto legible con alto contraste */
+  --crema:        #fffdf7;   /* fondo papel / contenido principal */
+  --rosa:         #ff9ebb;   /* acento exclusivo para corazones/detalles */
+  --rosa-hover:   #ff759f;
+  --lcd-bg:       #c7dbbf;   /* verde/gris LCD tamagotchi */
+  --lcd-border:   #8ca583;
+
+  --font-body:    'DotGothic16', monospace, sans-serif;
+  --font-title:   'Pixelify Sans', 'DotGothic16', sans-serif;
+
+  --sidebar-w:    240px;
+  --radius-box:   16px;
+  --radius-pill:  999px;
+
+  /* Sombra dura pixel (sin desenfoque) */
+  --pixel-shadow: 4px 4px 0px var(--linea);
+  --pixel-shadow-dark: 4px 4px 0px var(--borde-oscuro);
+  --pixel-shadow-sm: 2px 2px 0px var(--linea);
+}
+
+/* ── Reset y bases ────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--texto);
+  background-color: var(--bg);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+
+  /* Textura Dither / Trama Neocities nítida y repetible */
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(59, 140, 255, 0.14) 1px, transparent 0),
+    radial-gradient(circle at 3px 3px, rgba(29, 43, 74, 0.08) 1px, transparent 0);
+  background-size: 8px 8px, 8px 8px;
+
+  /* Cursor pixel mano con fallback */
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%231d2b4a' d='M9 1h4v4H9zm0 4h6v2H9zm6 2h2v4h-2zm2 4h2v8h-2zm-2 8h-2v2h2zm-2 2H9v-2h4zm-4-2H7v-4h2zm-2-4H5v-4h2zm-2-4H3V7h2zm6-4v4h2V3h-2z'/%3E%3Cpath fill='%23ffffff' d='M10 3h2v4h-2zm-2 6h2v6H8zm2 2h2v6h-2zm2 0h2v6h-2zm2 2h2v4h-2z'/%3E%3C/svg%3E") 4 2, pointer;
+}
+
+@media (min-width: 1200px) {
+  body {
+    font-size: 18px;
+  }
+}
+
+/* ── Accesibilidad ────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:focus-visible {
+  outline: 3px solid var(--borde-oscuro);
+  outline-offset: 2px;
+}
+
+button {
+  font-family: inherit;
+  cursor: inherit;
+}
+
+/* ── Pantalla de Entrada ──────────────────────────────────────── */
+#pantalla-entrada {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: var(--bg);
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(59, 140, 255, 0.18) 1px, transparent 0),
+    radial-gradient(circle at 3px 3px, rgba(29, 43, 74, 0.1) 1px, transparent 0);
+  background-size: 8px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  transition: opacity .4s ease, visibility .4s ease;
+}
+
+#pantalla-entrada.oculta {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.entrada-caja {
+  position: relative;
+  background: var(--crema);
+  border: 3px solid var(--borde-oscuro);
+  border-radius: 20px;
+  box-shadow: 8px 8px 0px var(--linea);
+  padding: 40px 32px 32px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+}
+
+.entrada-caja::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 2px dotted var(--linea);
+  border-radius: 14px;
+  pointer-events: none;
+}
+
+.entrada-arco-deco {
+  width: 90px;
+  height: 48px;
+  border: 3px solid var(--borde-oscuro);
+  border-bottom: none;
+  border-radius: 90px 90px 0 0;
+  background: var(--panel);
+  margin: 0 auto -3px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.entrada-arco-deco svg {
+  margin-top: 6px;
+  fill: var(--rosa);
+}
+
+.entrada-titulo {
+  font-family: var(--font-title);
+  font-size: 34px;
+  color: var(--borde-oscuro);
+  margin-bottom: 4px;
+}
+
+.entrada-sub {
+  font-size: 15px;
+  color: var(--linea);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+#entrada-password {
+  display: none;
+  width: 80%;
+  max-width: 240px;
+  margin: 0 auto 16px;
+  padding: 8px 14px;
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 15px;
+  text-align: center;
+}
+
+#entrada-error {
+  display: none;
+  color: #d12e4f;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.btn-abrir {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--panel);
+  border: 3px solid var(--borde-oscuro);
+  border-radius: var(--radius-pill);
+  box-shadow: 4px 4px 0px var(--borde-oscuro);
+  padding: 12px 28px;
+  font-family: var(--font-title);
+  font-size: 18px;
+  color: var(--borde-oscuro);
+  transition: transform .12s, box-shadow .12s, background .15s;
+}
+
+.btn-abrir:hover {
+  background: #bce0ef;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--borde-oscuro);
+}
+
+.btn-abrir:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--borde-oscuro);
+}
+
+/* ── MARCO PRINCIPAL Y CONTENEDOR ─────────────────────────────── */
+#app {
+  display: none;
+  min-height: 100vh;
+  padding: 24px 16px 40px;
+}
+#app.visible {
+  display: flex;
+  justify-content: center;
+}
+
+/* Contenedor central con festoneado lateral como la capilla */
+.scallop-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1140px;
+  background: var(--crema);
+  border: 3px solid var(--borde-oscuro);
+  border-radius: 24px;
+  box-shadow: 8px 8px 0px var(--linea);
+  padding: 24px 28px 0px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Festoneado en los bordes izquierdo y derecho (nubes/ondas) */
+.scallop-wrapper::before,
+.scallop-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 30px;
+  bottom: 80px;
+  width: 20px;
+  pointer-events: none;
+  background-repeat: repeat-y;
+  background-size: 20px 40px;
+}
+
+.scallop-wrapper::before {
+  left: -22px;
+  background-image: radial-gradient(circle at 20px 20px, var(--crema) 14px, var(--borde-oscuro) 15px, var(--borde-oscuro) 17px, transparent 18px);
+}
+
+.scallop-wrapper::after {
+  right: -22px;
+  background-image: radial-gradient(circle at 0px 20px, var(--crema) 14px, var(--borde-oscuro) 15px, var(--borde-oscuro) 17px, transparent 18px);
+}
+
+@media (max-width: 1220px) {
+  .scallop-wrapper::before,
+  .scallop-wrapper::after {
+    display: none; /* oculta las ondas flotantes si la pantalla es estrecha */
+  }
+}
+
+/* ── LAYOUT 2 COLUMNAS (SIDEBAR + MAIN) ───────────────────────── */
+.layout-grid {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+/* ── BARRA LATERAL (SIDEBAR) ─────────────────────────────────── */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 24px;
+}
+
+/* Logo / Cabecera Sidebar */
+.site-branding {
+  background: var(--panel);
+  border: 3px solid var(--borde-oscuro);
+  border-radius: var(--radius-box);
+  box-shadow: var(--pixel-shadow-dark);
+  padding: 16px 14px;
+  text-align: center;
+}
+
+.site-title {
+  font-family: var(--font-title);
+  font-size: 28px;
+  line-height: 1.1;
+  color: var(--borde-oscuro);
+  letter-spacing: 0.5px;
+}
+
+.site-subtitle {
+  font-size: 13px;
+  color: var(--linea);
+  margin-top: 4px;
+  letter-spacing: 1.5px;
+}
+
+/* Menú de botones estilo Píldora */
+.nav-menu-box {
+  background: var(--panel-light);
+  border: 3px solid var(--borde-oscuro);
+  border-radius: var(--radius-box);
+  box-shadow: var(--pixel-shadow-dark);
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-cat-label {
+  font-family: var(--font-title);
+  font-size: 11px;
+  color: var(--linea);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 2px 8px;
+}
+
+.nav-pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 14px;
+  background: var(--crema);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: var(--radius-pill);
+  box-shadow: 2px 2px 0px var(--borde-oscuro);
+  color: var(--texto);
+  font-size: 15px;
+  text-decoration: none;
+  transition: all .12s;
+  text-align: left;
+}
+
+.nav-pill-btn:hover {
+  background: #ffffff;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--linea);
+}
+
+.nav-pill-btn.activo {
+  background: var(--linea);
+  color: #fff;
+  border-color: var(--borde-oscuro);
+  font-weight: bold;
+  box-shadow: 3px 3px 0px var(--borde-oscuro);
+}
+
+.nav-pill-btn.activo .pixel-icon {
+  fill: #fff;
+}
+
+.pixel-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  fill: var(--borde-oscuro);
+}
+
+/* ── MINI REPRODUCTOR EN SIDEBAR ─────────────────────────────── */
+.mini-player-card {
+  background: var(--crema);
+  border: 3px solid var(--borde-oscuro);
+  border-radius: var(--radius-box);
+  box-shadow: var(--pixel-shadow-dark);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.mini-player-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Vinilo/Cassette giratorio pixel */
+.vinyl-disc {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ff9ebb 18%, #1d2b4a 20%, #1d2b4a 55%, #3b8cff 57%, #1d2b4a 60%, #1d2b4a 95%, #3b8cff 100%);
+  border: 2px solid var(--borde-oscuro);
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.15);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.vinyl-disc::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  transform: translate(-50%, -50%);
+  background: var(--crema);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 50%;
+}
+
+.vinyl-disc.girando {
+  animation: girarDisco 3.5s linear infinite;
+}
+
+@keyframes girarDisco {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.mini-player-trackinfo {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-text {
+  display: inline-block;
+  font-family: var(--font-title);
+  font-size: 14px;
+  color: var(--borde-oscuro);
+  animation: marquee 8s linear infinite;
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0%); }
+  50%  { transform: translateX(-40%); }
+  100% { transform: translateX(0%); }
+}
+
+.mini-player-artist {
+  font-size: 12px;
+  color: var(--linea);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mini-player-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.m-btn {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 8px;
+  background: var(--panel);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 0px var(--borde-oscuro);
+  transition: transform .1s;
+}
+
+.m-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px var(--borde-oscuro);
+}
+
+.m-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: var(--borde-oscuro);
+}
+
+.mini-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e2edf2;
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.mini-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--linea);
+  transition: width .2s linear;
+}
+
+/* ── CONTENIDO PRINCIPAL (MAIN) ──────────────────────────────── */
+.main-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* Secciones */
+.seccion {
+  display: none;
+}
+.seccion.activa {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* ── ZONA SUPERIOR: ILUSTRACIÓN QUE ASOMA ─────────────────────── */
+.peeking-art-wrapper {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  margin-bottom: -15px; /* se solapa por encima del marco */
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 40px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.peeking-illustration {
+  position: relative;
+  width: 220px;
+  height: 130px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* ── DETALLES HECHOS A MANO: CINTA WASHI Y PEGATINAS ─────────── */
+.washi-tape {
+  position: absolute;
+  top: -12px;
+  left: 28px;
+  width: 90px;
+  height: 24px;
+  background: rgba(255, 183, 201, 0.7);
+  border: 1px dashed rgba(29, 43, 74, 0.4);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+  transform: rotate(-3deg);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.corner-doodle {
+  position: absolute;
+  pointer-events: none;
+  z-index: 8;
+}
+
+/* ── CAJAS / PANELES CON PESTAÑA (STYLE LAMB CHAPEL) ─────────── */
+.box-panel {
+  position: relative;
+  background: var(--crema);
+  border: 3px solid var(--borde-oscuro);
+  border-radius: var(--radius-box);
+  box-shadow: var(--pixel-shadow);
+  padding: 24px 22px 20px;
+}
+
+.box-tab {
+  position: absolute;
+  top: -16px;
+  left: 20px;
+  background: var(--panel);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 8px 8px 0 0;
+  padding: 2px 14px;
+  font-family: var(--font-title);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--borde-oscuro);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Marco con borde festoneado/ondulado interior */
+.inner-scallop-frame {
+  position: relative;
+  background: #fbfdff;
+  border: 3px solid var(--linea);
+  border-radius: 12px;
+  padding: 28px 24px;
+  outline: 2px dashed var(--linea);
+  outline-offset: -7px;
+}
+
+/* Mensaje / Poema de bienvenida centrado y destacado */
+.bienvenida-poema {
+  text-align: center;
+  font-size: 19px;
+  line-height: 1.85;
+  color: var(--borde-oscuro);
+  max-width: 620px;
+  margin: 0 auto;
+  white-space: pre-line;
+}
+
+/* Checkbox decorativo estilo capilla */
+.verify-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--panel-light);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 14px;
+  color: var(--borde-oscuro);
+  margin-bottom: 6px;
+}
+
+.verify-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--borde-oscuro);
+  background: var(--crema);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.verify-checkbox svg {
+  width: 12px;
+  height: 12px;
+  fill: var(--linea);
+}
+
+/* ── CONTADOR DE DÍAS Y MINI TIRA TIMELINE EN PORTADA ─────────── */
+.portada-extras-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.counter-card {
+  background: var(--crema);
+  border: 3px solid var(--borde-oscuro);
+  border-radius: var(--radius-box);
+  box-shadow: var(--pixel-shadow);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.counter-number {
+  font-family: var(--font-title);
+  font-size: 38px;
+  line-height: 1;
+  color: var(--linea);
+}
+
+.counter-label {
+  font-size: 14px;
+  line-height: 1.3;
+  color: var(--borde-oscuro);
+}
+
+/* Mini tira interactiva de la Línea del Tiempo */
+.mini-timeline-strip {
+  background: var(--crema);
+  border: 3px solid var(--borde-oscuro);
+  border-radius: var(--radius-box);
+  box-shadow: var(--pixel-shadow);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform .12s, box-shadow .12s;
+}
+
+.mini-timeline-strip:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--linea);
+}
+
+.mini-strip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: var(--borde-oscuro);
+  font-weight: bold;
+}
+
+.mini-dots-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 6px 4px;
+}
+
+.mini-dots-row::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 50%;
+  height: 3px;
+  background: var(--linea);
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.mini-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--borde-oscuro);
+  background: var(--crema);
+  z-index: 2;
+  position: relative;
+  transition: transform .15s, background .15s;
+}
+
+.mini-dot.hoy {
+  background: var(--rosa);
+  width: 18px;
+  height: 18px;
+  box-shadow: 0 0 0 2px var(--linea);
+}
+
+.mini-dot.futuro {
+  background: #ffffff;
+  border-style: dashed;
+}
+
+/* ── GRID INFERIOR DE PORTADA (ACTIVIDAD + TAMAGOTCHI) ────────── */
+.portada-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+}
+
+/* Caja de Actividad */
+.activity-card {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.activity-thumb {
+  width: 100px;
+  height: 90px;
+  background: var(--panel);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 2px 2px 0px var(--borde-oscuro);
+}
+
+.activity-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.activity-badge {
+  display: inline-block;
+  background: var(--rosa);
+  border: 1px solid var(--borde-oscuro);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 11px;
+  color: var(--borde-oscuro);
+  font-weight: bold;
+  width: fit-content;
+}
+
+.activity-title {
+  font-family: var(--font-title);
+  font-size: 18px;
+  color: var(--borde-oscuro);
+}
+
+.activity-text {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── TAMAGOTCHI MEJORADO (HUEVO CON BOTONES FUERA) ───────────── */
+.tamagotchi-egg {
+  width: 250px;
+  margin: 0 auto;
+  background: #f7d4dc; /* rosa pastel suave en la carcasa */
+  border: 4px solid var(--borde-oscuro);
+  border-radius: 120px 120px 100px 100px;
+  padding: 18px 16px 20px;
+  box-shadow: 5px 5px 0px var(--borde-oscuro);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.egg-brand {
+  font-family: var(--font-title);
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--borde-oscuro);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+/* Pantalla LCD rectangular arriba */
+.tama-screen-bezel {
+  width: 100%;
+  background: #aabda2;
+  border: 3px solid var(--borde-oscuro);
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: inset 2px 2px 5px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+#tama-canvas {
+  background: var(--lcd-bg);
+  border: 2px solid var(--lcd-border);
+  image-rendering: pixelated;
+  width: 160px;
+  height: 96px;
+}
+
+.tama-hearts-bar {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.tama-heart-icon {
+  width: 14px;
+  height: 14px;
+  fill: var(--rosa);
+}
+
+.tama-heart-icon.vacio {
+  fill: #8ca583;
+  opacity: .5;
+}
+
+/* 3 botones físicos A, B, C fuera y debajo de la pantalla LCD */
+.tama-buttons-row {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 14px;
+}
+
+.tama-btn-physical {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffe3ea;
+  border: 3px solid var(--borde-oscuro);
+  box-shadow: 2px 2px 0px var(--borde-oscuro);
+  font-family: var(--font-title);
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--borde-oscuro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .08s, box-shadow .08s;
+}
+
+.tama-btn-physical:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--borde-oscuro);
+}
+
+/* ── LÍNEA DEL TIEMPO V2 ──────────────────────────────────────── */
+.timeline-wrapper {
+  background: var(--crema);
+  border: 3px solid var(--borde-oscuro);
+  border-radius: var(--radius-box);
+  box-shadow: var(--pixel-shadow);
+  padding: 28px 20px 24px;
+}
+
+.timeline-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 60px 20px;
+  cursor: grab;
+  scrollbar-width: thin;
+  scrollbar-color: var(--linea) var(--panel);
+}
+
+.timeline-container:active {
+  cursor: grabbing;
+}
+
+.timeline-track {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  min-width: max-content;
+  padding: 20px 40px;
+}
+
+.timeline-linea {
+  position: absolute;
+  top: 48px; /* alineado exactamente con el centro del hito-punto */
+  left: 40px;
+  height: 4px;
+  background: var(--linea);
+  border: 1px solid var(--borde-oscuro);
+  z-index: 1;
+}
+
+.timeline-linea-futuro {
+  position: absolute;
+  top: 48px;
+  height: 4px;
+  border-top: 4px dashed var(--linea);
+  z-index: 1;
+  opacity: .6;
+  mask-image: linear-gradient(to right, #000 0%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, #000 0%, transparent 100%);
+}
+
+.hito {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 140px;
+  flex-shrink: 0;
+  z-index: 2;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.hito-fecha {
+  font-family: var(--font-title);
+  font-size: 13px;
+  color: var(--linea);
+  height: 24px;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.hito-punto {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 3px solid var(--borde-oscuro);
+  background: var(--crema);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 0px var(--borde-oscuro);
+  transition: transform .15s, background .15s;
+  flex-shrink: 0;
+}
+
+.hito:hover .hito-punto,
+.hito:focus-visible .hito-punto {
+  transform: scale(1.3);
+  background: var(--linea);
+}
+
+.hito-titulo {
+  font-family: var(--font-title);
+  font-size: 14px;
+  color: var(--borde-oscuro);
+  text-align: center;
+  margin-top: 12px;
+  max-width: 120px;
+  line-height: 1.25;
+}
+
+.hito-hoy .hito-punto {
+  width: 30px;
+  height: 30px;
+  background: var(--rosa);
+  box-shadow: 0 0 0 3px var(--linea);
+}
+
+.hito-futuro {
+  opacity: 0.6;
+}
+
+.hito-futuro .hito-punto {
+  border-style: dashed;
+}
+
+/* ── MODAL DE HITO (TARJETA) ──────────────────────────────────── */
+.hito-tarjeta-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(29, 43, 74, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeInOverlay .2s ease;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.hito-tarjeta {
+  background: var(--crema);
+  border: 4px solid var(--borde-oscuro);
+  border-radius: var(--radius-box);
+  box-shadow: 8px 8px 0px var(--linea);
+  padding: 26px;
+  max-width: 440px;
+  width: 100%;
+  position: relative;
+}
+
+.hito-tarjeta-cerrar {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: var(--panel);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  font-family: var(--font-title);
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hito-tarjeta-cerrar:hover {
+  background: var(--linea);
+  color: #fff;
+}
+
+.foto-placeholder {
+  width: 100%;
+  height: 160px;
+  background: var(--panel-light);
+  border: 2px dashed var(--linea);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 14px 0;
+  color: var(--linea);
+}
+
+/* ── ARCOS DECORATIVOS ANCLADOS AL BORDE INFERIOR (LAMB CHAPEL) ── */
+.chapel-arches-footer {
+  width: 100%;
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.chapel-arch {
+  height: 90px;
+  background: var(--panel);
+  border: 3px solid var(--borde-oscuro);
+  border-bottom: none;
+  border-radius: 80px 80px 0 0;
+  position: relative;
+  /* Textura de rayas horizontales tenues */
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 4px,
+    rgba(59, 140, 255, 0.25) 4px,
+    rgba(59, 140, 255, 0.25) 6px
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chapel-arch::before {
+  content: "";
+  position: absolute;
+  inset: 6px 6px 0 6px;
+  border: 2px dotted var(--linea);
+  border-bottom: none;
+  border-radius: 70px 70px 0 0;
+}
+
+.candle-holder {
+  position: absolute;
+  bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── CAJA "EN CONSTRUCCIÓN" ───────────────────────────────────── */
+.en-construccion-box {
+  background: var(--crema);
+  border: 3px solid var(--borde-oscuro);
+  border-radius: var(--radius-box);
+  box-shadow: var(--pixel-shadow);
+  padding: 60px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.en-construccion-icon {
+  width: 48px;
+  height: 48px;
+  fill: var(--linea);
+}
+
+/* ── RESPONSIVE Y MÓVIL (≤768px) ──────────────────────────────── */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 74px; /* espacio para el mini reproductor fijo en móvil */
+  }
+
+  #app {
+    padding: 12px 8px 80px;
+  }
+
+  .layout-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .scallop-wrapper {
+    padding: 16px 12px 0px;
+    border-radius: 16px;
+  }
+
+  /* En móvil, el branding es compacto y centrado */
+  .site-branding {
+    padding: 10px;
+  }
+  .site-title {
+    font-size: 22px;
+  }
+
+  /* Menú de botones horizontal con scroll o grid compacto de 2 columnas */
+  .nav-menu-box {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    padding: 10px 8px;
+  }
+  .nav-cat-label {
+    grid-column: span 2;
+    padding: 1px 4px;
+    font-size: 10px;
+  }
+  .nav-pill-btn {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  /* Mini reproductor fijo abajo en móvil */
+  .mini-player-card {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-top: 3px solid var(--borde-oscuro);
+    box-shadow: 0 -4px 0 rgba(59, 140, 255, 0.2);
+    z-index: 999;
+    padding: 8px 12px;
+    background: var(--crema);
+  }
+  .mini-player-header {
+    margin-bottom: 2px;
+  }
+  .vinyl-disc {
+    width: 34px;
+    height: 34px;
+  }
+
+  .portada-extras-row {
+    grid-template-columns: 1fr;
+  }
+
+  .portada-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chapel-arches-footer {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .chapel-arch:nth-child(n+3) {
+    display: none;
+  }
+
+  .peeking-art-wrapper {
+    justify-content: center;
+    padding-right: 0;
+    height: 100px;
+  }
+  .peeking-illustration svg {
+    width: 170px;
+    height: 105px;
+  }
+
+  .bienvenida-poema {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .inner-scallop-frame {
+    padding: 18px 14px;
+  }
+}

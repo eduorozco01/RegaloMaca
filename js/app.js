@@ -1,0 +1,674 @@
+/* ═══════════════════════════════════════════════════════════════
+ *  app.js — Lógica v2 (Contador, Tamagotchi Canvas, Mini Player)
+ * ═══════════════════════════════════════════════════════════════ */
+
+(function () {
+  "use strict";
+
+  var estado = {
+    seccionActual: "inicio",
+    pista: 0,
+    sonando: false,
+    mute: false,
+    audio: null,
+    tamaFrame: 0,
+    tamaAccion: null, // "corazon", "rebote", "comida"
+    tamaTimer: 0
+  };
+
+  /* ══════════════════════════════════════════════════════════════
+   *  PANTALLA DE ENTRADA
+   * ══════════════════════════════════════════════════════════════ */
+  function initEntrada() {
+    var cfg = window.CONFIG || {};
+    var pantalla = document.getElementById("pantalla-entrada");
+    var btn = document.getElementById("btn-entrada");
+    var passInput = document.getElementById("entrada-password");
+    var errorMsg = document.getElementById("entrada-error");
+
+    if (cfg.contrasena && cfg.contrasena.length > 0) {
+      passInput.style.display = "block";
+    }
+
+    function acceder() {
+      if (cfg.contrasena && cfg.contrasena.length > 0) {
+        if (passInput.value !== cfg.contrasena) {
+          errorMsg.style.display = "block";
+          errorMsg.textContent = "✧ contraseña incorrecta ✧";
+          passInput.focus();
+          return;
+        }
+      }
+      pantalla.classList.add("oculta");
+      document.getElementById("app").classList.add("visible");
+
+      // Iniciar música
+      if (window.MUSICA && window.MUSICA.length > 0) {
+        reproducir(0);
+      }
+    }
+
+    btn.addEventListener("click", acceder);
+    passInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") acceder();
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+   *  NAVEGACIÓN ENTRE SECCIONES
+   * ══════════════════════════════════════════════════════════════ */
+  function initNav() {
+    var btns = document.querySelectorAll(".nav-pill-btn");
+
+    btns.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var sec = btn.getAttribute("data-seccion");
+        cambiarSeccion(sec);
+      });
+    });
+
+    // Clic en mini tira de la portada lleva a la timeline
+    var miniStrip = document.getElementById("mini-timeline-strip");
+    if (miniStrip) {
+      miniStrip.addEventListener("click", function () {
+        cambiarSeccion("timeline");
+      });
+      miniStrip.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          cambiarSeccion("timeline");
+        }
+      });
+    }
+  }
+
+  function cambiarSeccion(id) {
+    estado.seccionActual = id;
+
+    document.querySelectorAll(".seccion").forEach(function (sec) {
+      sec.classList.remove("activa");
+    });
+
+    var target = document.getElementById("seccion-" + id);
+    if (target) {
+      target.classList.add("activa");
+    }
+
+    // Si entramos a la timeline, recalcular la posición de la línea horizontal
+    if (id === "timeline") {
+      requestAnimationFrame(function () {
+        var track = document.getElementById("timeline-track");
+        var datos = window.TIMELINE || [];
+        var idxFuturo = -1;
+        datos.forEach(function (h, i) {
+          if (h.tipo === "futuro" && idxFuturo === -1) idxFuturo = i;
+        });
+        if (track) ajustarLineasTimeline(track, datos, idxFuturo);
+      });
+    }
+
+    document.querySelectorAll(".nav-pill-btn").forEach(function (btn) {
+      btn.classList.toggle("activo", btn.getAttribute("data-seccion") === id);
+    });
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+   *  INICIO: POEMA, CONTADOR Y MINI TIRA
+   * ══════════════════════════════════════════════════════════════ */
+  function initInicio() {
+    var cfg = window.CONFIG || {};
+
+    // Poema / Mensaje de bienvenida
+    var bienvenidaEl = document.getElementById("inicio-bienvenida");
+    if (bienvenidaEl && cfg.mensajeBienvenida) {
+      bienvenidaEl.textContent = cfg.mensajeBienvenida;
+    }
+
+    // Actividad
+    if (cfg.actividad) {
+      var badgeEl = document.getElementById("actividad-badge");
+      var tituloEl = document.getElementById("actividad-titulo");
+      var textoEl = document.getElementById("actividad-texto");
+      if (badgeEl && cfg.actividad.etiqueta) badgeEl.textContent = cfg.actividad.etiqueta;
+      if (tituloEl && cfg.actividad.titulo) tituloEl.textContent = cfg.actividad.titulo;
+      if (textoEl && cfg.actividad.texto) textoEl.textContent = cfg.actividad.texto;
+    }
+
+    // Contador de días juntos
+    var contadorEl = document.getElementById("contador-dias");
+    if (contadorEl) {
+      var fechaStr = cfg.fechaInicio || "2021-10-29";
+      var partes = fechaStr.split("-");
+      var fInicio = new Date(parseInt(partes[0], 10), parseInt(partes[1], 10) - 1, parseInt(partes[2], 10));
+      var ahora = new Date();
+      var diffMs = ahora.getTime() - fInicio.getTime();
+      var dias = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+      contadorEl.textContent = dias.toLocaleString("es-ES");
+    }
+
+    // Mini tira de la línea del tiempo en portada
+    var miniDots = document.getElementById("mini-dots-container");
+    var timeline = window.TIMELINE || [];
+    if (miniDots && timeline.length > 0) {
+      miniDots.innerHTML = "";
+      timeline.forEach(function (h) {
+        var dot = document.createElement("div");
+        dot.className = "mini-dot";
+        if (h.tipo === "hoy") dot.classList.add("hoy");
+        if (h.tipo === "futuro") dot.classList.add("futuro");
+        dot.setAttribute("title", h.fecha + ": " + h.titulo);
+        miniDots.appendChild(dot);
+      });
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+   *  MASCOTA TAMAGOTCHI EN CANVAS (SPRITE PIXEL CON 2 FRAMES IDLE)
+   * ══════════════════════════════════════════════════════════════ */
+  /*
+   * SPRITE FÁCILMENTE EDITABLE:
+   * Matriz de 20x16 píxeles.
+   * '.' = transparente
+   * 'N' = #1d2b4a (delineado oscuro)
+   * 'O' = #ff9ebb (rosa suave)
+   * 'C' = #fffdf7 (blanco crema)
+   * 'G' = #3b8cff (azul acento)
+   * 'R' = #ff4b72 (rojo/rubor)
+   */
+  var paletaMascota = {
+    ".": null,
+    "N": "#1d2b4a",
+    "O": "#ff9ebb",
+    "C": "#fffdf7",
+    "G": "#3b8cff",
+    "R": "#ff6f91"
+  };
+
+  // Frame 1: Normal (ojos abiertos)
+  var spriteFrame1 = [
+    "....NN........NN....",
+    "...NCCN......NCCN...",
+    "...NCOON....NOOCN...",
+    "...NCOOONNNNOOOCN...",
+    "..NCOOCOOOOCOOCON...",
+    "..NCOOCOOOOCOOCON...",
+    ".NCOONNOOOONNOOCN...",
+    ".NCOONNOOOONNOOCN...",
+    ".NCOOOOOONOOOOOCN...",
+    ".NCOOROOOOOORROCN...",
+    "..NCOOOOOOOOOOCN....",
+    "..NCOOONNNNOOOCN....",
+    "...NCCCCCCCCCCN.....",
+    "...NNNNN..NNNNN.....",
+    "....................",
+    "...................."
+  ];
+
+  // Frame 2: Parpadeo / sonrisa
+  var spriteFrame2 = [
+    "....NN........NN....",
+    "...NCCN......NCCN...",
+    "...NCOON....NOOCN...",
+    "...NCOOONNNNOOOCN...",
+    "..NCOOCOOOOCOOCON...",
+    "..NCOOCOOOOCOOCON...",
+    ".NCOO..OOOO..OOCN...",
+    ".NCOONNOOOONNOOCN...",
+    ".NCOOOOOONOOOOOCN...",
+    ".NCOOROOOOOORROCN...",
+    "..NCOOONNNNOOOCN....",
+    "..NCOOON..NOOOCN....",
+    "...NCCCCCCCCCCN.....",
+    "...NNNNN..NNNNN.....",
+    "....................",
+    "...................."
+  ];
+
+  function initTamagotchi() {
+    var canvas = document.getElementById("tama-canvas");
+    if (!canvas) return;
+    var ctx = canvas.getContext("2d");
+
+    // Desactivar antialiasing para píxeles perfectos
+    ctx.imageSmoothingEnabled = false;
+
+    // Animación Idle en bucle
+    setInterval(function () {
+      estado.tamaFrame = (estado.tamaFrame === 0) ? 1 : 0;
+      dibujarTamagotchi(ctx);
+    }, 850);
+
+    // Botones físicos A, B, C debajo de la pantalla LCD
+    var btnA = document.getElementById("tama-btn-a");
+    var btnB = document.getElementById("tama-btn-b");
+    var btnC = document.getElementById("tama-btn-c");
+
+    if (btnA) {
+      btnA.addEventListener("click", function () {
+        activarAccionTama("corazon", ctx);
+      });
+    }
+    if (btnB) {
+      btnB.addEventListener("click", function () {
+        activarAccionTama("rebote", ctx);
+      });
+    }
+    if (btnC) {
+      btnC.addEventListener("click", function () {
+        activarAccionTama("comida", ctx);
+      });
+    }
+
+    dibujarTamagotchi(ctx);
+  }
+
+  function activarAccionTama(accion, ctx) {
+    estado.tamaAccion = accion;
+    dibujarTamagotchi(ctx);
+
+    if (estado.tamaTimer) clearTimeout(estado.tamaTimer);
+    estado.tamaTimer = setTimeout(function () {
+      estado.tamaAccion = null;
+      dibujarTamagotchi(ctx);
+    }, 1400);
+  }
+
+  function dibujarTamagotchi(ctx) {
+    var cw = ctx.canvas.width;
+    var ch = ctx.canvas.height;
+
+    // Fondo LCD
+    ctx.fillStyle = "#c7dbbf";
+    ctx.fillRect(0, 0, cw, ch);
+
+    // Grid sutil de píxeles LCD
+    ctx.fillStyle = "rgba(140, 165, 131, 0.15)";
+    for (var gx = 0; gx < cw; gx += 2) {
+      ctx.fillRect(gx, 0, 1, ch);
+    }
+
+    // Elegir frame y posición
+    var frame = (estado.tamaFrame === 0) ? spriteFrame1 : spriteFrame2;
+    var offsetX = 10;
+    var offsetY = (estado.tamaAccion === "rebote" && estado.tamaFrame === 1) ? 3 : 4;
+
+    // Dibujar sprite píxel a píxel
+    for (var y = 0; y < frame.length; y++) {
+      var fila = frame[y];
+      for (var x = 0; x < fila.length; x++) {
+        var char = fila[x];
+        var color = paletaMascota[char];
+        if (color) {
+          ctx.fillStyle = color;
+          ctx.fillRect(offsetX + x, offsetY + y, 1, 1);
+        }
+      }
+    }
+
+    // Extras según acción:
+    if (estado.tamaAccion === "corazon") {
+      // Corazoncito pixel flotando al lado
+      ctx.fillStyle = "#ff4b72";
+      var hx = 31, hy = 5;
+      ctx.fillRect(hx+1, hy, 1, 1); ctx.fillRect(hx+3, hy, 1, 1);
+      ctx.fillRect(hx, hy+1, 5, 1);
+      ctx.fillRect(hx+1, hy+2, 3, 1);
+      ctx.fillRect(hx+2, hy+3, 1, 1);
+    } else if (estado.tamaAccion === "comida") {
+      // Galletita pixel
+      ctx.fillStyle = "#1d2b4a";
+      var fx = 3, fy = 14;
+      ctx.fillRect(fx, fy, 4, 3);
+      ctx.fillStyle = "#ff9ebb";
+      ctx.fillRect(fx+1, fy+1, 2, 1);
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+   *  LÍNEA DEL TIEMPO COMPLETA
+   * ══════════════════════════════════════════════════════════════ */
+  function initTimeline() {
+    var datos = window.TIMELINE || [];
+    var track = document.getElementById("timeline-track");
+    var container = document.getElementById("timeline-container");
+    if (!track || datos.length === 0) return;
+
+    track.innerHTML = "";
+
+    var indiceFuturo = -1;
+    datos.forEach(function (h, i) {
+      if (h.tipo === "futuro" && indiceFuturo === -1) indiceFuturo = i;
+    });
+
+    var lineaSolida = document.createElement("div");
+    lineaSolida.className = "timeline-linea";
+    track.appendChild(lineaSolida);
+
+    var lineaFuturo = document.createElement("div");
+    lineaFuturo.className = "timeline-linea-futuro";
+    track.appendChild(lineaFuturo);
+
+    datos.forEach(function (h) {
+      var btn = document.createElement("button");
+      btn.className = "hito";
+      btn.setAttribute("type", "button");
+      btn.setAttribute("aria-label", h.titulo + ", " + h.fecha);
+
+      if (h.tipo === "hoy") btn.classList.add("hito-hoy");
+      if (h.tipo === "futuro") btn.classList.add("hito-futuro");
+
+      var fecha = document.createElement("span");
+      fecha.className = "hito-fecha";
+      fecha.textContent = h.fecha;
+
+      var punto = document.createElement("span");
+      punto.className = "hito-punto";
+      if (h.tipo === "hoy") {
+        punto.innerHTML = "<svg viewBox='0 0 16 16' width='12' height='12' fill='#1d2b4a'><path d='M2 3h3v2H2zm9 0h3v2h-3zM1 5h14v4H1zm1 4h12v2H2zm2 2h8v2H4zm2 2h4v2H6z'/></svg>";
+      }
+
+      var titulo = document.createElement("span");
+      titulo.className = "hito-titulo";
+      titulo.textContent = h.titulo;
+
+      btn.appendChild(fecha);
+      btn.appendChild(punto);
+      btn.appendChild(titulo);
+
+      if (h.cancion !== null && h.cancion !== undefined) {
+        var mus = document.createElement("span");
+        mus.style.fontSize = "11px";
+        mus.style.color = "var(--linea)";
+        mus.textContent = "♪";
+        btn.appendChild(mus);
+      }
+
+      btn.addEventListener("click", function () {
+        abrirTarjetaHito(h);
+      });
+
+      track.appendChild(btn);
+    });
+
+    requestAnimationFrame(function () {
+      ajustarLineasTimeline(track, datos, indiceFuturo);
+    });
+
+    // Drag con ratón
+    var isDown = false, startX, scrollLeft;
+    container.addEventListener("mousedown", function (e) {
+      if (e.target.closest(".hito")) return;
+      isDown = true;
+      startX = e.pageX - container.offsetLeft;
+      scrollLeft = container.scrollLeft;
+    });
+    window.addEventListener("mouseup", function () { isDown = false; });
+    container.addEventListener("mousemove", function (e) {
+      if (!isDown) return;
+      e.preventDefault();
+      var x = e.pageX - container.offsetLeft;
+      var walk = (x - startX) * 1.5;
+      container.scrollLeft = scrollLeft - walk;
+    });
+
+    // Flechas de teclado
+    container.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight") {
+        container.scrollLeft += 150;
+        e.preventDefault();
+      } else if (e.key === "ArrowLeft") {
+        container.scrollLeft -= 150;
+        e.preventDefault();
+      }
+    });
+  }
+
+  function ajustarLineasTimeline(track, datos, indiceFuturo) {
+    var hitos = track.querySelectorAll(".hito");
+    if (hitos.length === 0) return;
+
+    var primerHito = hitos[0];
+    var ultimoSolido = (indiceFuturo > 0) ? hitos[indiceFuturo - 1] : hitos[hitos.length - 1];
+    var ultimoHito = hitos[hitos.length - 1];
+
+    var lineaSolida = track.querySelector(".timeline-linea");
+    var lineaFuturo = track.querySelector(".timeline-linea-futuro");
+
+    var startX = primerHito.offsetLeft + (primerHito.offsetWidth / 2);
+    var endSolidoX = ultimoSolido.offsetLeft + (ultimoSolido.offsetWidth / 2);
+
+    if (lineaSolida) {
+      lineaSolida.style.left = startX + "px";
+      lineaSolida.style.width = Math.max(0, endSolidoX - startX) + "px";
+    }
+
+    if (lineaFuturo) {
+      if (indiceFuturo > 0 && indiceFuturo < datos.length) {
+        var endTotalX = ultimoHito.offsetLeft + (ultimoHito.offsetWidth / 2) + 60;
+        lineaFuturo.style.left = endSolidoX + "px";
+        lineaFuturo.style.width = Math.max(0, endTotalX - endSolidoX) + "px";
+        lineaFuturo.style.display = "block";
+      } else {
+        lineaFuturo.style.display = "none";
+      }
+    }
+  }
+
+  /* Tarjeta Modal de Hito */
+  function abrirTarjetaHito(hito) {
+    var anterior = document.querySelector(".hito-tarjeta-overlay");
+    if (anterior) anterior.remove();
+
+    var overlay = document.createElement("div");
+    overlay.className = "hito-tarjeta-overlay";
+    overlay.addEventListener("click", function (e) {
+      if (e.target === overlay) overlay.remove();
+    });
+
+    var tarjeta = document.createElement("div");
+    tarjeta.className = "hito-tarjeta";
+
+    var btnCerrar = document.createElement("button");
+    btnCerrar.className = "hito-tarjeta-cerrar";
+    btnCerrar.textContent = "✕";
+    btnCerrar.addEventListener("click", function () { overlay.remove(); });
+
+    var fecha = document.createElement("div");
+    fecha.style.fontSize = "13px";
+    fecha.style.color = "var(--linea)";
+    fecha.style.fontWeight = "bold";
+    fecha.textContent = hito.fecha;
+
+    var titulo = document.createElement("h3");
+    titulo.style.fontFamily = "var(--font-title)";
+    titulo.style.fontSize = "22px";
+    titulo.style.color = "var(--borde-oscuro)";
+    titulo.style.margin = "4px 0 10px";
+    titulo.textContent = hito.titulo;
+
+    var fotoArea = document.createElement("div");
+    if (hito.foto && hito.foto.length > 0) {
+      var img = document.createElement("img");
+      img.src = hito.foto;
+      img.alt = hito.titulo;
+      img.style.width = "100%";
+      img.style.borderRadius = "8px";
+      img.style.border = "2px solid var(--borde-oscuro)";
+      img.onerror = function () {
+        fotoArea.innerHTML = "";
+        fotoArea.appendChild(crearPlaceholderFoto());
+      };
+      fotoArea.appendChild(img);
+    } else {
+      fotoArea.appendChild(crearPlaceholderFoto());
+    }
+
+    var texto = document.createElement("p");
+    texto.style.fontSize = "15px";
+    texto.style.lineHeight = "1.6";
+    texto.textContent = hito.texto;
+
+    tarjeta.appendChild(btnCerrar);
+    tarjeta.appendChild(fecha);
+    tarjeta.appendChild(titulo);
+    tarjeta.appendChild(fotoArea);
+    tarjeta.appendChild(texto);
+
+    if (hito.cancion !== null && hito.cancion !== undefined) {
+      var canciones = window.MUSICA || [];
+      if (canciones[hito.cancion]) {
+        var btnCancion = document.createElement("button");
+        btnCancion.className = "btn-abrir";
+        btnCancion.style.padding = "6px 14px";
+        btnCancion.style.fontSize = "14px";
+        btnCancion.style.marginTop = "14px";
+        btnCancion.innerHTML = "<span>♪ " + canciones[hito.cancion].titulo + "</span>";
+        btnCancion.addEventListener("click", function () {
+          reproducir(hito.cancion);
+        });
+        tarjeta.appendChild(btnCancion);
+      }
+    }
+
+    overlay.appendChild(tarjeta);
+    document.body.appendChild(overlay);
+
+    function onEsc(e) {
+      if (e.key === "Escape") {
+        overlay.remove();
+        document.removeEventListener("keydown", onEsc);
+      }
+    }
+    document.addEventListener("keydown", onEsc);
+  }
+
+  function crearPlaceholderFoto() {
+    var ph = document.createElement("div");
+    ph.className = "foto-placeholder";
+    ph.innerHTML = "<svg class='pixel-icon' style='width:32px; height:32px; fill:var(--linea);' viewBox='0 0 16 16'><path d='M3 2h10v1H3V2zm-1 2h12v1H2V4zm-1 2h14v8H1V6zm3 2v4h8V8H4z'/></svg><span style='font-size:12px;'>foto por añadir ✧</span>";
+    return ph;
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+   *  MINI REPRODUCTOR EN SIDEBAR
+   * ══════════════════════════════════════════════════════════════ */
+  function initReproductor() {
+    var canciones = window.MUSICA || [];
+    if (canciones.length === 0) return;
+
+    estado.audio = new Audio();
+    estado.audio.volume = 0.5;
+
+    var btnPlay = document.getElementById("player-play");
+    var btnNext = document.getElementById("player-next");
+    var btnMute = document.getElementById("player-mute");
+    var progress = document.getElementById("player-progress");
+
+    btnPlay.addEventListener("click", function () {
+      if (estado.sonando) {
+        pausar();
+      } else {
+        reproducir(estado.pista);
+      }
+    });
+
+    btnNext.addEventListener("click", function () {
+      var sig = (estado.pista + 1) % canciones.length;
+      reproducir(sig);
+    });
+
+    btnMute.addEventListener("click", function () {
+      estado.mute = !estado.mute;
+      estado.audio.muted = estado.mute;
+      document.getElementById("icon-vol").style.display = estado.mute ? "none" : "block";
+      document.getElementById("icon-muted").style.display = estado.mute ? "block" : "none";
+    });
+
+    estado.audio.addEventListener("timeupdate", function () {
+      if (estado.audio.duration && progress) {
+        var pct = (estado.audio.currentTime / estado.audio.duration) * 100;
+        progress.style.width = pct + "%";
+      }
+    });
+
+    estado.audio.addEventListener("ended", function () {
+      var sig = (estado.pista + 1) % canciones.length;
+      reproducir(sig);
+    });
+
+    actualizarInfoReproductor();
+  }
+
+  function reproducir(idx) {
+    var canciones = window.MUSICA || [];
+    if (canciones.length === 0) return;
+
+    estado.pista = idx;
+    var track = canciones[idx];
+    estado.audio.src = track.archivo;
+
+    var p = estado.audio.play();
+    if (p !== undefined) {
+      p.catch(function () {
+        // Reproducción bloqueada por navegador o archivo ausente
+      });
+    }
+
+    estado.sonando = true;
+    actualizarInfoReproductor();
+  }
+
+  function pausar() {
+    if (estado.audio) {
+      estado.audio.pause();
+      estado.sonando = false;
+      actualizarInfoReproductor();
+    }
+  }
+
+  function actualizarInfoReproductor() {
+    var canciones = window.MUSICA || [];
+    var track = canciones[estado.pista];
+    if (!track) return;
+
+    var tituloEl = document.getElementById("player-titulo");
+    var artistaEl = document.getElementById("player-artista");
+    var disc = document.getElementById("vinyl-disc");
+    var iconPlay = document.getElementById("icon-play");
+    var iconPause = document.getElementById("icon-pause");
+
+    if (tituloEl) tituloEl.textContent = track.titulo;
+    if (artistaEl) artistaEl.textContent = track.artista;
+
+    if (estado.sonando) {
+      if (disc) disc.classList.add("girando");
+      if (iconPlay) iconPlay.style.display = "none";
+      if (iconPause) iconPause.style.display = "block";
+    } else {
+      if (disc) disc.classList.remove("girando");
+      if (iconPlay) iconPlay.style.display = "block";
+      if (iconPause) iconPause.style.display = "none";
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+   *  INICIALIZACIÓN GENERAL
+   * ══════════════════════════════════════════════════════════════ */
+  function init() {
+    initEntrada();
+    initNav();
+    initInicio();
+    initTamagotchi();
+    initTimeline();
+    initReproductor();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+
+})();

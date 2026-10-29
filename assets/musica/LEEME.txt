@@ -1,0 +1,2 @@
+Pon aquí los archivos de audio (.mp3, .ogg, .wav).
+Nómbralos como aparecen en data/musica.js (ej: cancion-01.mp3).
