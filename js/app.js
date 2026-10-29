@@ -327,7 +327,7 @@
   }
 
   /* ══════════════════════════════════════════════════════════════
-   *  LÍNEA DEL TIEMPO COMPLETA
+   *  LÍNEA DEL TIEMPO COMPLETA & NAVEGADOR POR AÑOS
    * ══════════════════════════════════════════════════════════════ */
   function initTimeline() {
     var datos = window.TIMELINE || [];
@@ -350,22 +350,24 @@
     lineaFuturo.className = "timeline-linea-futuro";
     track.appendChild(lineaFuturo);
 
-    datos.forEach(function (h) {
+    datos.forEach(function (h, index) {
       var btn = document.createElement("button");
       btn.className = "hito";
       btn.setAttribute("type", "button");
-      btn.setAttribute("aria-label", h.titulo + ", " + h.fecha);
+      btn.setAttribute("aria-label", h.titulo + ", " + (h.fechaCorta || h.fecha));
+      btn.setAttribute("data-year", h.year || "");
+      btn.setAttribute("data-index", index);
 
       if (h.tipo === "hoy") btn.classList.add("hito-hoy");
       if (h.tipo === "futuro") btn.classList.add("hito-futuro");
 
       var fecha = document.createElement("span");
       fecha.className = "hito-fecha";
-      fecha.textContent = h.fecha;
+      fecha.textContent = h.fechaCorta || h.fecha;
 
       var punto = document.createElement("span");
       punto.className = "hito-punto";
-      if (h.tipo === "hoy") {
+      if (h.tipo === "hoy" || h.isWebcamAction) {
         punto.innerHTML = "<svg viewBox='0 0 16 16' width='12' height='12' fill='#1d2b4a'><path d='M2 3h3v2H2zm9 0h3v2h-3zM1 5h14v4H1zm1 4h12v2H2zm2 2h8v2H4zm2 2h4v2H6z'/></svg>";
       }
 
@@ -377,7 +379,12 @@
       btn.appendChild(punto);
       btn.appendChild(titulo);
 
-      if (h.cancion !== null && h.cancion !== undefined) {
+      if (h.isWebcamAction) {
+        var camBadge = document.createElement("span");
+        camBadge.className = "hito-hoy-badge";
+        camBadge.textContent = "📷 ¡Foto hoy!";
+        btn.appendChild(camBadge);
+      } else if (h.cancion !== null && h.cancion !== undefined) {
         var mus = document.createElement("span");
         mus.style.fontSize = "11px";
         mus.style.color = "var(--linea)";
@@ -386,10 +393,42 @@
       }
 
       btn.addEventListener("click", function () {
-        abrirTarjetaHito(h);
+        if (h.isWebcamAction) {
+          abrirPhotoBoothWebcam(h);
+        } else {
+          abrirTarjetaHito(h);
+        }
       });
 
       track.appendChild(btn);
+    });
+
+    // Conectar botones de navegación por año
+    var yearBtns = document.querySelectorAll(".year-btn");
+    yearBtns.forEach(function (yBtn) {
+      yBtn.addEventListener("click", function () {
+        yearBtns.forEach(function (b) { b.classList.remove("activo"); });
+        yBtn.classList.add("activo");
+
+        var yearSelected = yBtn.getAttribute("data-year");
+        if (yearSelected === "todos") {
+          container.scrollTo({ left: 0, behavior: "smooth" });
+          return;
+        }
+        if (yearSelected === "hoy") {
+          var hoyEl = track.querySelector(".hito-hoy");
+          if (hoyEl) {
+            container.scrollTo({ left: Math.max(0, hoyEl.offsetLeft - 100), behavior: "smooth" });
+          }
+          return;
+        }
+
+        // Buscar el primer hito del año seleccionado
+        var targetHito = track.querySelector(".hito[data-year='" + yearSelected + "']");
+        if (targetHito) {
+          container.scrollTo({ left: Math.max(0, targetHito.offsetLeft - 60), behavior: "smooth" });
+        }
+      });
     });
 
     requestAnimationFrame(function () {
@@ -416,10 +455,10 @@
     // Flechas de teclado
     container.addEventListener("keydown", function (e) {
       if (e.key === "ArrowRight") {
-        container.scrollLeft += 150;
+        container.scrollLeft += 180;
         e.preventDefault();
       } else if (e.key === "ArrowLeft") {
-        container.scrollLeft -= 150;
+        container.scrollLeft -= 180;
         e.preventDefault();
       }
     });
@@ -456,7 +495,7 @@
     }
   }
 
-  /* Tarjeta Modal de Hito */
+  /* Tarjeta Modal de Hito Estándar */
   function abrirTarjetaHito(hito) {
     var anterior = document.querySelector(".hito-tarjeta-overlay");
     if (anterior) anterior.remove();
@@ -479,7 +518,7 @@
     fecha.style.fontSize = "13px";
     fecha.style.color = "var(--linea)";
     fecha.style.fontWeight = "bold";
-    fecha.textContent = hito.fecha;
+    fecha.textContent = hito.fechaCorta ? (hito.fechaCorta + " (" + hito.fecha + ")") : hito.fecha;
 
     var titulo = document.createElement("h3");
     titulo.style.fontFamily = "var(--font-title)";
@@ -508,7 +547,7 @@
     var texto = document.createElement("p");
     texto.style.fontSize = "15px";
     texto.style.lineHeight = "1.6";
-    texto.textContent = hito.texto;
+    texto.textContent = hito.desc || hito.texto || "";
 
     tarjeta.appendChild(btnCerrar);
     tarjeta.appendChild(fecha);
@@ -540,6 +579,236 @@
         overlay.remove();
         document.removeEventListener("keydown", onEsc);
       }
+    }
+    document.addEventListener("keydown", onEsc);
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+   *  PHOTOBOOTH RETRO WEBCAM (HITO: HOY)
+   * ══════════════════════════════════════════════════════════════ */
+  function abrirPhotoBoothWebcam(hito) {
+    var anterior = document.querySelector(".hito-tarjeta-overlay");
+    if (anterior) anterior.remove();
+
+    var overlay = document.createElement("div");
+    overlay.className = "hito-tarjeta-overlay";
+
+    var modal = document.createElement("div");
+    modal.className = "photobooth-modal";
+
+    var btnCerrar = document.createElement("button");
+    btnCerrar.className = "hito-tarjeta-cerrar";
+    btnCerrar.textContent = "✕";
+
+    var flash = document.createElement("div");
+    flash.className = "flash-overlay";
+
+    var titulo = document.createElement("h3");
+    titulo.style.fontFamily = "var(--font-title)";
+    titulo.style.fontSize = "22px";
+    titulo.style.color = "var(--borde-oscuro)";
+    titulo.textContent = hito.titulo;
+
+    var desc = document.createElement("p");
+    desc.style.fontSize = "14px";
+    desc.style.color = "var(--texto)";
+    desc.style.margin = "4px 0 10px";
+    desc.textContent = hito.desc || "Una foto instantánea juntos para sellar estos 5 años.";
+
+    var frame = document.createElement("div");
+    frame.className = "photobooth-frame";
+
+    var video = document.createElement("video");
+    video.autoplay = true;
+    video.playsInline = true;
+    video.muted = true;
+
+    var canvas = document.createElement("canvas");
+    canvas.style.display = "none";
+
+    var stamp = document.createElement("div");
+    stamp.className = "stamp-date";
+    var d = new Date();
+    stamp.textContent = d.getFullYear() + "." + String(d.getMonth() + 1).padStart(2, '0') + "." + String(d.getDate()).padStart(2, '0');
+
+    frame.appendChild(video);
+    frame.appendChild(canvas);
+    frame.appendChild(stamp);
+    frame.appendChild(flash);
+
+    var controls = document.createElement("div");
+    controls.className = "photobooth-controls";
+
+    var btnShutter = document.createElement("button");
+    btnShutter.className = "btn-shutter";
+    btnShutter.innerHTML = "<span>📸 Capturar Foto</span>";
+
+    var btnRetake = document.createElement("button");
+    btnRetake.className = "btn-abrir";
+    btnRetake.style.fontSize = "13px";
+    btnRetake.style.padding = "6px 14px";
+    btnRetake.style.display = "none";
+    btnRetake.innerHTML = "<span>↺ Repetir</span>";
+
+    var btnSave = document.createElement("button");
+    btnSave.className = "btn-shutter";
+    btnSave.style.display = "none";
+    btnSave.style.background = "var(--panel)";
+    btnSave.innerHTML = "<span>♥ Guardar Recuerdo</span>";
+
+    controls.appendChild(btnShutter);
+    controls.appendChild(btnRetake);
+    controls.appendChild(btnSave);
+
+    modal.appendChild(btnCerrar);
+    modal.appendChild(titulo);
+    modal.appendChild(desc);
+    modal.appendChild(frame);
+    modal.appendChild(controls);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    var localStream = null;
+
+    // Verificar si ya hay una foto guardada previamente en localStorage
+    var fotoGuardada = localStorage.getItem("maca_foto_hoy");
+    if (fotoGuardada) {
+      mostrarFotoCapturada(fotoGuardada);
+    } else {
+      iniciarCamara();
+    }
+
+    function iniciarCamara() {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" }
+        }).then(function (stream) {
+          localStream = stream;
+          video.srcObject = stream;
+          video.style.display = "block";
+          canvas.style.display = "none";
+          btnShutter.style.display = "inline-flex";
+          btnRetake.style.display = "none";
+          btnSave.style.display = "none";
+        }).catch(function (err) {
+          desc.textContent = "No se pudo acceder a la webcam (" + err.message + "). ¡Puedes subir una foto si lo prefieres!";
+          mostrarFallbackSubida();
+        });
+      } else {
+        desc.textContent = "Navegador sin soporte de cámara web directo. ¡Sube tu foto favorita!";
+        mostrarFallbackSubida();
+      }
+    }
+
+    function mostrarFallbackSubida() {
+      btnShutter.style.display = "none";
+      var fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = "image/*";
+      fileInput.style.display = "none";
+
+      var btnUpload = document.createElement("button");
+      btnUpload.className = "btn-shutter";
+      btnUpload.innerHTML = "<span>📁 Seleccionar foto</span>";
+      btnUpload.addEventListener("click", function () { fileInput.click(); });
+
+      fileInput.addEventListener("change", function () {
+        if (fileInput.files && fileInput.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            mostrarFotoCapturada(e.target.result);
+          };
+          reader.readAsDataURL(fileInput.files[0]);
+        }
+      });
+
+      controls.appendChild(btnUpload);
+      controls.appendChild(fileInput);
+    }
+
+    btnShutter.addEventListener("click", function () {
+      if (!localStream) return;
+
+      // Disparar destello blanco
+      flash.classList.remove("disparando");
+      void flash.offsetWidth;
+      flash.classList.add("disparando");
+
+      setTimeout(function () {
+        var vw = video.videoWidth || 640;
+        var vh = video.videoHeight || 480;
+        canvas.width = vw;
+        canvas.height = vh;
+
+        var ctx = canvas.getContext("2d");
+        // Dibujar frame
+        ctx.drawImage(video, 0, 0, vw, vh);
+
+        // Estampar fecha retro
+        ctx.fillStyle = "#ffb7c9";
+        ctx.font = "bold 20px monospace";
+        ctx.shadowColor = "#1d2b4a";
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.fillText(stamp.textContent, vw - 160, vh - 20);
+
+        var dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+        mostrarFotoCapturada(dataUrl);
+      }, 150);
+    });
+
+    function mostrarFotoCapturada(imgSrc) {
+      if (localStream) {
+        localStream.getTracks().forEach(function (t) { t.stop(); });
+        localStream = null;
+      }
+      var imgPreview = new Image();
+      imgPreview.src = imgSrc;
+      imgPreview.onload = function () {
+        canvas.width = imgPreview.width;
+        canvas.height = imgPreview.height;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(imgPreview, 0, 0);
+
+        video.style.display = "none";
+        canvas.style.display = "block";
+        btnShutter.style.display = "none";
+        btnRetake.style.display = "inline-flex";
+        btnSave.style.display = "inline-flex";
+      };
+
+      btnSave.onclick = function () {
+        try {
+          localStorage.setItem("maca_foto_hoy", imgSrc);
+        } catch (e) {}
+        btnSave.innerHTML = "<span>✓ ¡Guardado en nuestro rincón!</span>";
+        btnSave.disabled = true;
+        setTimeout(function () { cerrar(); }, 900);
+      };
+    }
+
+    btnRetake.addEventListener("click", function () {
+      btnSave.disabled = false;
+      btnSave.innerHTML = "<span>♥ Guardar Recuerdo</span>";
+      iniciarCamara();
+    });
+
+    function cerrar() {
+      if (localStream) {
+        localStream.getTracks().forEach(function (t) { t.stop(); });
+        localStream = null;
+      }
+      overlay.remove();
+      document.removeEventListener("keydown", onEsc);
+    }
+
+    btnCerrar.addEventListener("click", cerrar);
+    overlay.addEventListener("click", function (e) {
+      if (e.target === overlay) cerrar();
+    });
+
+    function onEsc(e) {
+      if (e.key === "Escape") cerrar();
     }
     document.addEventListener("keydown", onEsc);
   }

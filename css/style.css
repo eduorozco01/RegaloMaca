@@ -306,6 +306,15 @@ button {
   letter-spacing: 0.5px;
 }
 
+/* Tipografía nítida y perfectamente legible para el número 5 */
+.brand-five {
+  font-family: var(--font-body) !important;
+  font-weight: 700;
+  color: var(--borde-oscuro);
+  display: inline-block;
+  padding: 0 2px;
+}
+
 .site-subtitle {
   font-size: 13px;
   color: var(--linea);
@@ -1019,7 +1028,182 @@ button {
   border-style: dashed;
 }
 
-/* ── MODAL DE HITO (TARJETA) ──────────────────────────────────── */
+/* ── NAVEGACIÓN RÁPIDA POR AÑOS EN TIMELINE ───────────────────── */
+.timeline-year-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.year-btn {
+  padding: 4px 12px;
+  font-family: var(--font-title);
+  font-size: 13px;
+  background: var(--panel-light);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: var(--radius-pill);
+  box-shadow: 2px 2px 0px var(--borde-oscuro);
+  color: var(--borde-oscuro);
+  transition: all .12s;
+}
+
+.year-btn:hover {
+  background: #fff;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--linea);
+}
+
+.year-btn.activo {
+  background: var(--linea);
+  color: #fff;
+  box-shadow: 2px 2px 0px var(--borde-oscuro);
+}
+
+.year-btn.special-today-btn {
+  background: var(--rosa);
+  font-weight: bold;
+}
+
+.year-btn.special-today-btn:hover {
+  background: var(--rosa-hover);
+}
+
+/* ── ESTILOS DEL PHOTOBOOTH WEBCAM RETRO PIXEL-ART ────────────── */
+.photobooth-modal {
+  background: var(--crema);
+  border: 4px solid var(--borde-oscuro);
+  border-radius: var(--radius-box);
+  box-shadow: 8px 8px 0px var(--linea);
+  padding: 24px;
+  max-width: 480px;
+  width: 95%;
+  position: relative;
+  text-align: center;
+}
+
+.photobooth-frame {
+  position: relative;
+  background: #111a2e;
+  border: 3px solid var(--borde-oscuro);
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+  margin: 14px auto;
+  width: 100%;
+  max-width: 380px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photobooth-frame video,
+.photobooth-frame canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+}
+
+/* Efecto de escaneo tenue retro en el visor */
+.photobooth-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,0.15),
+    rgba(0,0,0,0.15) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  border-radius: 12px;
+}
+
+/* Efecto de destello de flash al disparar */
+@keyframes cameraFlash {
+  0% { opacity: 0; }
+  50% { opacity: 0.95; }
+  100% { opacity: 0; }
+}
+
+.flash-overlay {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.flash-overlay.disparando {
+  animation: cameraFlash 0.35s ease-out;
+}
+
+.photobooth-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.btn-shutter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--rosa);
+  border: 3px solid var(--borde-oscuro);
+  border-radius: var(--radius-pill);
+  box-shadow: 3px 3px 0px var(--borde-oscuro);
+  padding: 10px 22px;
+  font-family: var(--font-title);
+  font-size: 16px;
+  color: var(--borde-oscuro);
+  font-weight: bold;
+  transition: all .1s;
+}
+
+.btn-shutter:hover {
+  background: var(--rosa-hover);
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px var(--borde-oscuro);
+}
+
+.btn-shutter:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--borde-oscuro);
+}
+
+.stamp-date {
+  font-family: monospace;
+  font-size: 11px;
+  color: #ff9ebb;
+  position: absolute;
+  bottom: 12px;
+  right: 14px;
+  text-shadow: 1px 1px 0 #1d2b4a;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Badge especial en el hito de hoy */
+.hito-hoy-badge {
+  display: inline-block;
+  background: var(--rosa);
+  border: 1px solid var(--borde-oscuro);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 9px;
+  color: var(--borde-oscuro);
+  font-weight: bold;
+  margin-top: 3px;
+}
 .hito-tarjeta-overlay {
   position: fixed;
   inset: 0;
