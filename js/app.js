@@ -952,6 +952,156 @@
   }
 
   /* ══════════════════════════════════════════════════════════════
+   *  SECCIÓN MAPA INTERACTIVO RETRO
+   * ══════════════════════════════════════════════════════════════ */
+  function initMapa() {
+    var lugares = window.LUGARES_MAPA || [];
+    var pinsLayer = document.getElementById("map-pins-layer");
+    var mapEspana = document.getElementById("svg-map-espana");
+    var mapEuropa = document.getElementById("svg-map-europa");
+    var tabBtns = document.querySelectorAll(".map-tab-btn");
+
+    if (!pinsLayer) return;
+
+    var vistaActual = "espana";
+
+    function renderizarPines(vista) {
+      pinsLayer.innerHTML = "";
+      var filtrados = lugares.filter(function (l) { return l.mapa === vista; });
+
+      filtrados.forEach(function (lugar) {
+        var btn = document.createElement("button");
+        btn.className = "map-pin";
+        btn.style.left = lugar.x + "%";
+        btn.style.top = lugar.y + "%";
+        btn.setAttribute("type", "button");
+        btn.setAttribute("aria-label", lugar.nombre);
+
+        if (lugar.tieneMensaje) {
+          btn.classList.add("pin-con-mensaje");
+        } else if (lugar.icono === "★") {
+          btn.classList.add("pin-ciudad-base");
+        } else {
+          btn.classList.add("pin-paso");
+        }
+
+        var marker = document.createElement("div");
+        marker.className = "pin-marker";
+        marker.textContent = lugar.icono || "•";
+        if (lugar.tieneMensaje) marker.classList.add("latido");
+
+        var tooltip = document.createElement("div");
+        tooltip.className = "pin-tooltip";
+        tooltip.textContent = lugar.nombre + (lugar.tieneMensaje ? " ♥" : "");
+
+        btn.appendChild(marker);
+        btn.appendChild(tooltip);
+
+        btn.addEventListener("click", function () {
+          if (lugar.tieneMensaje) {
+            abrirPostalViaje(lugar);
+          } else {
+            // Mensaje emergente sutil para lugares de paso
+            mostrarAvisoPin(lugar, btn);
+          }
+        });
+
+        pinsLayer.appendChild(btn);
+      });
+    }
+
+    tabBtns.forEach(function (tBtn) {
+      tBtn.addEventListener("click", function () {
+        tabBtns.forEach(function (b) { b.classList.remove("activo"); });
+        tBtn.classList.add("activo");
+
+        vistaActual = tBtn.getAttribute("data-mapa");
+        if (vistaActual === "espana") {
+          if (mapEspana) mapEspana.style.display = "block";
+          if (mapEuropa) mapEuropa.style.display = "none";
+        } else {
+          if (mapEspana) mapEspana.style.display = "none";
+          if (mapEuropa) mapEuropa.style.display = "block";
+        }
+        renderizarPines(vistaActual);
+      });
+    });
+
+    renderizarPines("espana");
+  }
+
+  function mostrarAvisoPin(lugar, btnEl) {
+    var tooltip = btnEl.querySelector(".pin-tooltip");
+    if (!tooltip) return;
+    var original = tooltip.textContent;
+    tooltip.textContent = "✓ ¡Estuvimos juntos aquí!";
+    tooltip.style.opacity = "1";
+    setTimeout(function () {
+      tooltip.textContent = original;
+      tooltip.style.opacity = "";
+    }, 1500);
+  }
+
+  function abrirPostalViaje(lugar) {
+    var anterior = document.querySelector(".hito-tarjeta-overlay");
+    if (anterior) anterior.remove();
+
+    var overlay = document.createElement("div");
+    overlay.className = "hito-tarjeta-overlay";
+    overlay.addEventListener("click", function (e) {
+      if (e.target === overlay) overlay.remove();
+    });
+
+    var postal = document.createElement("div");
+    postal.className = "postcard-modal";
+
+    var btnCerrar = document.createElement("button");
+    btnCerrar.className = "hito-tarjeta-cerrar";
+    btnCerrar.textContent = "✕";
+    btnCerrar.addEventListener("click", function () { overlay.remove(); });
+
+    // Sello postal retro
+    var stamp = document.createElement("div");
+    stamp.className = "postcard-stamp";
+    stamp.innerHTML = "<span style='font-size:14px; color:var(--rosa);'>♥</span><span>5 AÑOS</span>";
+
+    // Matasellos
+    var postmark = document.createElement("div");
+    postmark.className = "postcard-postmark";
+    postmark.innerHTML = "<span>VIAJE</span>";
+
+    var loc = document.createElement("h3");
+    loc.className = "postcard-location";
+    loc.textContent = lugar.nombre;
+
+    var date = document.createElement("div");
+    date.className = "postcard-date";
+    date.textContent = lugar.fecha + " ✧ " + lugar.titulo;
+
+    var body = document.createElement("div");
+    body.className = "postcard-body";
+    body.textContent = lugar.desc;
+
+    postal.appendChild(btnCerrar);
+    postal.appendChild(stamp);
+    postal.appendChild(postmark);
+    postal.appendChild(loc);
+    postal.appendChild(date);
+    postal.appendChild(body);
+
+    overlay.appendChild(postal);
+    document.body.appendChild(overlay);
+
+    function onEsc(e) {
+      if (e.key === "Escape") {
+        overlay.remove();
+        document.removeEventListener("keydown", onEsc);
+      }
+    }
+    document.addEventListener("keydown", onEsc);
+  }
+
+  /* ══════════════════════════════════════════════════════════════
    *  INICIALIZACIÓN GENERAL
    * ══════════════════════════════════════════════════════════════ */
   function init() {
@@ -960,6 +1110,7 @@
     initInicio();
     initTamagotchi();
     initTimeline();
+    initMapa();
     initReproductor();
   }
 

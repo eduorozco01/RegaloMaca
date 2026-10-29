@@ -1527,10 +1527,243 @@ button {
 
   .bienvenida-poema {
     font-size: 15px;
-    line-height: 1.7;
   }
-
   .inner-scallop-frame {
     padding: 18px 14px;
   }
 }
+
+/* ── SECCIÓN MAPA INTERACTIVO RETRO ──────────────────────────── */
+.map-view-switcher {
+  display: flex;
+  gap: 8px;
+}
+
+.map-tab-btn {
+  padding: 6px 14px;
+  background: var(--panel-light);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: var(--radius-pill);
+  box-shadow: 2px 2px 0px var(--borde-oscuro);
+  font-family: var(--font-title);
+  font-size: 13px;
+  color: var(--borde-oscuro);
+  cursor: pointer;
+  transition: all .12s;
+}
+
+.map-tab-btn:hover {
+  background: #fff;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--linea);
+}
+
+.map-tab-btn.activo {
+  background: var(--linea);
+  color: #fff;
+  box-shadow: 2px 2px 0px var(--borde-oscuro);
+}
+
+.retro-map-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 800 / 560;
+  max-height: 540px;
+  background: #d7ebf5;
+  border: 3px solid var(--borde-oscuro);
+  border-radius: var(--radius-box);
+  box-shadow: var(--pixel-shadow);
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.retro-map-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.map-pins-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Pines interactivos */
+.map-pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform .15s ease;
+  z-index: 5;
+}
+
+.map-pin:hover {
+  transform: translate(-50%, -60%) scale(1.2);
+  z-index: 20;
+}
+
+/* Pin con recuerdo especial (corazón / estrella) */
+.pin-marker {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--borde-oscuro);
+  background: var(--crema);
+  box-shadow: 2px 2px 0px var(--borde-oscuro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--borde-oscuro);
+  position: relative;
+}
+
+.pin-con-mensaje .pin-marker {
+  background: var(--rosa);
+  color: var(--borde-oscuro);
+  width: 26px;
+  height: 26px;
+  box-shadow: 0 0 0 2px var(--linea), 3px 3px 0px var(--borde-oscuro);
+}
+
+.pin-ciudad-base .pin-marker {
+  background: var(--linea);
+  color: #fff;
+  width: 26px;
+  height: 26px;
+  box-shadow: 3px 3px 0px var(--borde-oscuro);
+}
+
+/* Pin de paso sutil */
+.pin-paso .pin-marker {
+  width: 16px;
+  height: 16px;
+  background: var(--crema);
+  font-size: 10px;
+}
+
+/* Tooltip pixel en hover */
+.pin-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 6px;
+  background: var(--crema);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0px var(--borde-oscuro);
+  padding: 3px 8px;
+  font-family: var(--font-title);
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--borde-oscuro);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s, transform .15s;
+}
+
+.map-pin:hover .pin-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-2px);
+}
+
+/* ── POSTAL MODAL DE VIAJE (CUANDO TIENE MENSAJE) ─────────────── */
+.postcard-modal {
+  background: #fffef8;
+  border: 4px solid var(--borde-oscuro);
+  border-radius: var(--radius-box);
+  box-shadow: 8px 8px 0px var(--linea);
+  padding: 28px 24px 22px;
+  max-width: 440px;
+  width: 95%;
+  position: relative;
+  /* Borde interior estilo correo aéreo retro */
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(59, 140, 255, 0.08) 10px,
+    rgba(59, 140, 255, 0.08) 20px
+  );
+}
+
+.postcard-stamp {
+  position: absolute;
+  top: 14px;
+  right: 50px;
+  width: 44px;
+  height: 52px;
+  border: 2px dashed var(--rosa);
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-size: 9px;
+  color: var(--borde-oscuro);
+  transform: rotate(4deg);
+}
+
+.postcard-postmark {
+  position: absolute;
+  top: 35px;
+  right: 76px;
+  width: 38px;
+  height: 38px;
+  border: 2px solid rgba(59, 140, 255, 0.4);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-size: 8px;
+  color: rgba(59, 140, 255, 0.6);
+  transform: rotate(-12deg);
+  pointer-events: none;
+}
+
+.postcard-location {
+  font-family: var(--font-title);
+  font-size: 24px;
+  color: var(--borde-oscuro);
+  margin-bottom: 2px;
+}
+
+.postcard-date {
+  font-size: 12px;
+  color: var(--linea);
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+
+.postcard-body {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--borde-oscuro);
+  background: var(--crema);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 8px;
+  padding: 14px;
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
+}
+
+@media (max-width: 768px) {
+  .retro-map-container {
+    aspect-ratio: 4 / 3;
+    max-height: 380px;
+  }
+}
+

@@ -397,14 +397,92 @@
             </div>
           </section>
 
-          <!-- ═══════ SECCIONES "EN CONSTRUCCIÓN" ═══════ -->
+          <!-- ═══════ SECCIÓN MAPA INTERACTIVO ═══════ -->
           <section id="seccion-mapa" class="seccion">
-            <div class="en-construccion-box">
-              <svg class="en-construccion-icon" viewBox="0 0 16 16">
-                <path d="M1 2l4-1 6 2 4-1v12l-4 1-6-2-4 1V2zm5 1.2L2 4v9.8l4-.9V3.2zm2 .4v9.8l4 1.3V4.5L8 3.6z"/>
-              </svg>
-              <h3 style="font-family: var(--font-title); font-size: 24px;">Mapa en construcción ♥</h3>
-              <p style="color: var(--linea);">Pronto marcaremos todos los lugares especiales que hemos visitado juntos.</p>
+            <div class="box-panel">
+              <div class="box-tab">
+                <svg class="pixel-icon" style="fill: var(--linea);" viewBox="0 0 16 16">
+                  <path d="M1 2l4-1 6 2 4-1v12l-4 1-6-2-4 1V2zm5 1.2L2 4v9.8l4-.9V3.2zm2 .4v9.8l4 1.3V4.5L8 3.6z"/>
+                </svg>
+                <span>nuestro mapa ✧</span>
+              </div>
+
+              <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                <div>
+                  <h2 style="font-family: var(--font-title); font-size: 26px; color: var(--borde-oscuro);">Lugares que hemos vivido</h2>
+                  <p style="font-size: 14px; color: var(--linea);">Pulsa los pines con corazón ♥ para leer la anécdota especial de cada viaje</p>
+                </div>
+
+                <!-- Selector de Mapa (España o Europa) -->
+                <div class="map-view-switcher" role="tablist" aria-label="Cambiar vista del mapa">
+                  <button class="map-tab-btn activo" data-mapa="espana" type="button">🇪🇸 Península Ibérica</button>
+                  <button class="map-tab-btn" data-mapa="europa" type="button">🌍 Europa</button>
+                </div>
+              </div>
+
+              <!-- Lienzo / Contenedor interactivo del Mapa -->
+              <div class="retro-map-container" id="retro-map-container">
+                <!-- SVG base ilustrado con estética retro-pixel para España y Europa -->
+                <svg id="svg-map-espana" class="retro-map-svg" viewBox="0 0 800 560" preserveAspectRatio="xMidYMid meet">
+                  <defs>
+                    <pattern id="sea-dither" width="8" height="8" patternUnits="userSpaceOnUse">
+                      <rect width="8" height="8" fill="#d7ebf5"/>
+                      <circle cx="2" cy="2" r="1" fill="#b9ddf0" opacity="0.6"/>
+                    </pattern>
+                  </defs>
+                  <!-- Mar -->
+                  <rect width="800" height="560" fill="url(#sea-dither)"/>
+                  
+                  <!-- Silueta Península Ibérica (España y Portugal) en estilo pixel/retro suave -->
+                  <path class="land-path" d="M180,80 L440,70 L540,110 L620,130 L660,180 L630,220 L660,260 L620,330 L550,380 L480,450 L390,470 L300,460 L240,430 L210,360 L210,240 L170,160 L180,80 Z" fill="#fffdf7" stroke="#1d2b4a" stroke-width="3"/>
+                  
+                  <!-- Frontera Portugal punteada -->
+                  <path d="M260,140 L280,240 L260,340 L300,430" fill="none" stroke="#3b8cff" stroke-width="2" stroke-dasharray="4,4"/>
+                  
+                  <!-- Islas Baleares -->
+                  <path class="land-path" d="M680,270 L720,260 L730,285 L690,295 Z" fill="#fffdf7" stroke="#1d2b4a" stroke-width="2"/>
+                  <path class="land-path" d="M740,240 L765,230 L770,250 L745,260 Z" fill="#fffdf7" stroke="#1d2b4a" stroke-width="2"/>
+                  
+                  <!-- Olas decorativas pixel -->
+                  <text x="100" y="280" font-family="'DotGothic16', monospace" font-size="14" fill="#3b8cff" opacity="0.5">~ ~ Atlántico ~ ~</text>
+                  <text x="650" y="420" font-family="'DotGothic16', monospace" font-size="14" fill="#3b8cff" opacity="0.5">~ ~ Mediterráneo ~ ~</text>
+                  <text x="320" y="50" font-family="'DotGothic16', monospace" font-size="14" fill="#3b8cff" opacity="0.5">~ Cantábrico ~</text>
+                  
+                  <!-- Rosa de los vientos pixel -->
+                  <g transform="translate(100, 100)">
+                    <circle cx="0" cy="0" r="24" fill="#fffdf7" stroke="#1d2b4a" stroke-width="2"/>
+                    <path d="M0,-20 L4,-4 L20,0 L4,4 L0,20 L-4,4 L-20,0 L-4,-4 Z" fill="#ff9ebb" stroke="#1d2b4a" stroke-width="1.5"/>
+                    <text x="-4" y="-24" font-family="'DotGothic16', monospace" font-size="11" font-weight="bold" fill="#1d2b4a">N</text>
+                  </g>
+                </svg>
+
+                <svg id="svg-map-europa" class="retro-map-svg" viewBox="0 0 800 560" preserveAspectRatio="xMidYMid meet" style="display: none;">
+                  <!-- Mar de Europa -->
+                  <rect width="800" height="560" fill="url(#sea-dither)"/>
+                  
+                  <!-- Silueta Europa Occidental (Francia, Países Bajos, etc.) -->
+                  <path class="land-path" d="M120,480 L280,390 L340,350 L340,240 L380,180 L440,150 L520,130 L550,190 L510,240 L530,320 L470,410 L370,460 L240,510 Z" fill="#fffdf7" stroke="#1d2b4a" stroke-width="3"/>
+                  <!-- Países Bajos & costa norte -->
+                  <path class="land-path" d="M460,130 L540,110 L560,150 L500,170 Z" fill="#fffdf7" stroke="#1d2b4a" stroke-width="2"/>
+                  <!-- Reino Unido referencia -->
+                  <path class="land-path" d="M260,160 L320,110 L350,160 L300,240 L250,210 Z" fill="#eaf3f7" stroke="#1d2b4a" stroke-width="2" opacity="0.7"/>
+
+                  <text x="180" y="320" font-family="'DotGothic16', monospace" font-size="14" fill="#3b8cff" opacity="0.5">~ ~ Océano Atlántico ~ ~</text>
+                  <text x="440" y="470" font-family="'DotGothic16', monospace" font-size="14" fill="#3b8cff" opacity="0.5">~ ~ Mar Mediterráneo ~ ~</text>
+                </svg>
+
+                <!-- Contenedor dinámico de los Pines -->
+                <div class="map-pins-layer" id="map-pins-layer">
+                  <!-- Renderizados por JS con los datos de mapa.js -->
+                </div>
+              </div>
+
+              <!-- Leyenda inferior -->
+              <div style="display:flex; gap:16px; flex-wrap:wrap; font-size:13px; color:var(--borde-oscuro); margin-top:14px; align-items:center;">
+                <span><span style="color:var(--rosa); font-size:16px;">♥</span> Con recuerdo especial</span>
+                <span><span style="color:var(--linea); font-size:16px;">★</span> Nuestras ciudades base</span>
+                <span><span style="color:var(--borde-oscuro); font-size:16px;">•</span> Lugares de paso</span>
+              </div>
             </div>
           </section>
 
@@ -476,6 +554,7 @@
   <!-- Scripts clásicos -->
   <script src="data/config.js"></script>
   <script src="data/timeline.js"></script>
+  <script src="data/mapa.js"></script>
   <script src="data/musica.js"></script>
   <script src="js/app.js"></script>
 </body>
