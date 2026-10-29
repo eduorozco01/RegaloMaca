@@ -850,53 +850,155 @@
   }
 
   /* ══════════════════════════════════════════════════════════════
-   *  MINI REPRODUCTOR EN SIDEBAR
+   *  MINI REPRODUCTOR EN SIDEBAR & REPRODUCTOR GENERAL
    * ══════════════════════════════════════════════════════════════ */
+  function formatTimeDigital(seconds) {
+    if (isNaN(seconds) || seconds < 0) return "00:00";
+    var m = Math.floor(seconds / 60);
+    var s = Math.floor(seconds % 60);
+    return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
+  }
+
+  function playChiptuneTone(freq, duration, type, volume) {
+    try {
+      var AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      if (!estado.synthCtx) estado.synthCtx = new AudioCtx();
+      if (estado.synthCtx.state === "suspended") {
+        estado.synthCtx.resume();
+      }
+      var osc = estado.synthCtx.createOscillator();
+      var gain = estado.synthCtx.createGain();
+      osc.type = type || "square";
+      osc.frequency.setValueAtTime(freq, estado.synthCtx.currentTime);
+      var vol = volume || 0.15;
+      gain.gain.setValueAtTime(vol, estado.synthCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, estado.synthCtx.currentTime + (duration || 0.3));
+      osc.connect(gain);
+      gain.connect(estado.synthCtx.destination);
+      osc.start();
+      osc.stop(estado.synthCtx.currentTime + (duration || 0.3));
+    } catch (e) {}
+  }
+
+  function playChiptuneAnthem() {
+    var melody = [
+      { note: 261.63, d: 0.2 }, // Do
+      { note: 329.63, d: 0.2 }, // Mi
+      { note: 392.00, d: 0.2 }, // Sol
+      { note: 523.25, d: 0.35 },// Do'
+      { note: 440.00, d: 0.2 }, // La
+      { note: 523.25, d: 0.35 },// Do'
+      { note: 392.00, d: 0.4 }, // Sol
+      { note: 349.23, d: 0.2 }, // Fa
+      { note: 329.63, d: 0.2 }, // Mi
+      { note: 293.66, d: 0.2 }, // Re
+      { note: 261.63, d: 0.5 }  // Do
+    ];
+
+    var eqBars = document.querySelectorAll("#deck-eq-bars .eq-bar");
+    eqBars.forEach(function (bar) { bar.classList.add("animando"); });
+
+    var delay = 0;
+    melody.forEach(function (step) {
+      setTimeout(function () {
+        playChiptuneTone(step.note, step.d, "square", 0.18);
+      }, delay);
+      delay += (step.d * 1000) + 40;
+    });
+
+    setTimeout(function () {
+      if (!estado.sonando) {
+        eqBars.forEach(function (bar) { bar.classList.remove("animando"); });
+      }
+    }, delay + 200);
+  }
+
   function initReproductor() {
     var canciones = window.MUSICA || [];
     if (canciones.length === 0) return;
 
     estado.audio = new Audio();
-    estado.audio.volume = 0.5;
+    estado.audio.volume = 0.7;
 
     var btnPlay = document.getElementById("player-play");
     var btnNext = document.getElementById("player-next");
     var btnMute = document.getElementById("player-mute");
     var progress = document.getElementById("player-progress");
 
-    btnPlay.addEventListener("click", function () {
-      if (estado.sonando) {
-        pausar();
+    // Elementos del Cassette Deck
+    var deckScrubberFill = document.getElementById("deck-scrubber-fill");
+    var deckTimeCurrent = document.getElementById("deck-time-current");
+    var deckTimeTotal = document.getElementById("deck-time-total");
+    var tapeRibbonFill = document.getElementById("tape-ribbon-fill");
+
+    if (btnPlay) {
+      btnPlay.addEventListener("click", function () {
+        if (estado.sonando) {
+          pausar();
+        } else {
+          reproducir(estado.pista);
+        }
+      });
+    }
+
+    if (btnNext) {
+      btnNext.addEventListener("click", function () {
+        var sig = (estado.pista + 1) % canciones.length;
+        reproducir(sig);
+      });
+    }
+
+    if (btnMute) {
+      btnMute.addEventListener("click", function () {
+        toggleMute();
+      });
+    }
+
+    estado.audio.addEventListener("timeupdate", function () {
+      if (estado.audio.duration) {
+        var pct = (estado.audio.currentTime / estado.audio.duration) * 100;
+        if (progress) progress.style.width = pct + "%";
+        if (deckScrubberFill) deckScrubberFill.style.width = pct + "%";
+        if (deckTimeCurrent) deckTimeCurrent.textContent = formatTimeDigital(estado.audio.currentTime);
+        if (deckTimeTotal) deckTimeTotal.textContent = formatTimeDigital(estado.audio.duration);
+        if (tapeRibbonFill) tapeRibbonFill.style.width = (30 + pct * 0.4) + "%";
       } else {
-        reproducir(estado.pista);
+        if (deckTimeCurrent) deckTimeCurrent.textContent = formatTimeDigital(estado.audio.currentTime);
       }
     });
 
-    btnNext.addEventListener("click", function () {
-      var sig = (estado.pista + 1) % canciones.length;
-      reproducir(sig);
-    });
-
-    btnMute.addEventListener("click", function () {
-      estado.mute = !estado.mute;
-      estado.audio.muted = estado.mute;
-      document.getElementById("icon-vol").style.display = estado.mute ? "none" : "block";
-      document.getElementById("icon-muted").style.display = estado.mute ? "block" : "none";
-    });
-
-    estado.audio.addEventListener("timeupdate", function () {
-      if (estado.audio.duration && progress) {
-        var pct = (estado.audio.currentTime / estado.audio.duration) * 100;
-        progress.style.width = pct + "%";
+    estado.audio.addEventListener("loadedmetadata", function () {
+      if (deckTimeTotal && estado.audio.duration) {
+        deckTimeTotal.textContent = formatTimeDigital(estado.audio.duration);
       }
     });
 
     estado.audio.addEventListener("ended", function () {
-      var sig = (estado.pista + 1) % canciones.length;
-      reproducir(sig);
+      if (estado.audio.loop) {
+        reproducir(estado.pista);
+      } else {
+        var sig = (estado.pista + 1) % canciones.length;
+        reproducir(sig);
+      }
     });
 
     actualizarInfoReproductor();
+  }
+
+  function toggleMute() {
+    estado.mute = !estado.mute;
+    if (estado.audio) estado.audio.muted = estado.mute;
+    
+    var iconVol = document.getElementById("icon-vol");
+    var iconMuted = document.getElementById("icon-muted");
+    var deckIconVol = document.getElementById("deck-icon-vol");
+    var deckIconMuted = document.getElementById("deck-icon-muted");
+
+    if (iconVol) iconVol.style.display = estado.mute ? "none" : "block";
+    if (iconMuted) iconMuted.style.display = estado.mute ? "block" : "none";
+    if (deckIconVol) deckIconVol.style.display = estado.mute ? "none" : "block";
+    if (deckIconMuted) deckIconMuted.style.display = estado.mute ? "block" : "none";
   }
 
   function reproducir(idx) {
@@ -905,13 +1007,14 @@
 
     estado.pista = idx;
     var track = canciones[idx];
-    estado.audio.src = track.archivo;
-
-    var p = estado.audio.play();
-    if (p !== undefined) {
-      p.catch(function () {
-        // Reproducción bloqueada por navegador o archivo ausente
-      });
+    if (estado.audio) {
+      estado.audio.src = track.archivo;
+      var p = estado.audio.play();
+      if (p !== undefined) {
+        p.catch(function () {
+          // Si el archivo mp3 no existe o el navegador bloquea autoplay, se mantiene el estado visual
+        });
+      }
     }
 
     estado.sonando = true;
@@ -921,9 +1024,9 @@
   function pausar() {
     if (estado.audio) {
       estado.audio.pause();
-      estado.sonando = false;
-      actualizarInfoReproductor();
     }
+    estado.sonando = false;
+    actualizarInfoReproductor();
   }
 
   function actualizarInfoReproductor() {
@@ -931,6 +1034,7 @@
     var track = canciones[estado.pista];
     if (!track) return;
 
+    // Mini Player
     var tituloEl = document.getElementById("player-titulo");
     var artistaEl = document.getElementById("player-artista");
     var disc = document.getElementById("vinyl-disc");
@@ -949,6 +1053,246 @@
       if (iconPlay) iconPlay.style.display = "block";
       if (iconPause) iconPause.style.display = "none";
     }
+
+    // Cassette Deck Visual
+    var deckTitle = document.getElementById("deck-display-title");
+    var deckArtist = document.getElementById("deck-display-artist");
+    var deckSideTag = document.getElementById("cassette-side-tag");
+    var spoolLeft = document.getElementById("spool-left");
+    var spoolRight = document.getElementById("spool-right");
+    var eqBars = document.querySelectorAll("#deck-eq-bars .eq-bar");
+    var deckBadge = document.getElementById("deck-status-badge");
+    var deckIconPlay = document.getElementById("deck-icon-play");
+    var deckIconPause = document.getElementById("deck-icon-pause");
+    var deckBtnLabel = document.getElementById("deck-btn-label-play");
+    var btnDeckPlay = document.getElementById("btn-deck-play");
+
+    if (deckTitle) deckTitle.textContent = track.titulo;
+    if (deckArtist) deckArtist.textContent = track.artista;
+    if (deckSideTag) deckSideTag.textContent = "CARA " + (track.lado || "A");
+
+    if (estado.sonando) {
+      if (spoolLeft) spoolLeft.classList.add("girando");
+      if (spoolRight) spoolRight.classList.add("girando");
+      eqBars.forEach(function (bar) { bar.classList.add("animando"); });
+      if (deckBadge) {
+        deckBadge.textContent = "PLAYING";
+        deckBadge.classList.add("activo");
+      }
+      if (deckIconPlay) deckIconPlay.style.display = "none";
+      if (deckIconPause) deckIconPause.style.display = "block";
+      if (deckBtnLabel) deckBtnLabel.textContent = "PAUSA";
+      if (btnDeckPlay) btnDeckPlay.classList.add("sonando");
+    } else {
+      if (spoolLeft) spoolLeft.classList.remove("girando");
+      if (spoolRight) spoolRight.classList.remove("girando");
+      eqBars.forEach(function (bar) { bar.classList.remove("animando"); });
+      if (deckBadge) {
+        deckBadge.textContent = "EN PAUSA";
+        deckBadge.classList.remove("activo");
+      }
+      if (deckIconPlay) deckIconPlay.style.display = "block";
+      if (deckIconPause) deckIconPause.style.display = "none";
+      if (deckBtnLabel) deckBtnLabel.textContent = "PLAY";
+      if (btnDeckPlay) btnDeckPlay.classList.remove("sonando");
+    }
+
+    // Actualizar dedicatoria al pie
+    var dedTitle = document.getElementById("dedication-track-name");
+    var dedText = document.getElementById("dedication-note-text");
+    var dedQuote = document.getElementById("dedication-quote");
+    if (dedTitle) dedTitle.textContent = track.titulo + " — " + track.artista;
+    if (dedText) dedText.textContent = track.nota || "Nuestra canción especial.";
+    if (dedQuote) dedQuote.textContent = track.letra || "«Bailando juntos...»";
+
+    // Marcar fila activa en la lista de canciones
+    var rows = document.querySelectorAll(".track-row-card");
+    rows.forEach(function (row) {
+      if (parseInt(row.getAttribute("data-index"), 10) === estado.pista) {
+        row.classList.add("activa");
+      } else {
+        row.classList.remove("activa");
+      }
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+   *  SECCIÓN PLAYLIST INTERACTIVA (CONTROLES, PIANO, LISTA)
+   * ══════════════════════════════════════════════════════════════ */
+  function initPlaylistSection() {
+    var canciones = window.MUSICA || [];
+    var listContainer = document.getElementById("playlist-tracks-list");
+    var filtroActual = "all";
+
+    // Renderizar lista de pistas
+    function renderizarPistas(filtro) {
+      if (!listContainer) return;
+      listContainer.innerHTML = "";
+
+      canciones.forEach(function (item, idx) {
+        if (filtro !== "all" && item.lado !== filtro) return;
+
+        var card = document.createElement("div");
+        card.className = "track-row-card" + (idx === estado.pista ? " activa" : "");
+        card.setAttribute("data-index", idx);
+
+        card.innerHTML =
+          '<div class="track-left-meta">' +
+            '<span class="track-num-badge">' + (item.pistaNum || ("0" + (idx + 1))) + '</span>' +
+            '<button class="track-play-trigger-btn" type="button" aria-label="Reproducir ' + item.titulo + '">' +
+              '<svg class="pixel-icon" style="width:12px; height:12px;" viewBox="0 0 16 16"><path d="M4 2l10 6-10 6V2z"/></svg>' +
+            '</button>' +
+            '<div class="track-info-col">' +
+              '<div class="track-main-title">' + item.titulo + '</div>' +
+              '<div class="track-sub-details">' +
+                '<span>' + item.artista + '</span>' +
+                (item.etiqueta ? '<span class="track-tag-pill">' + item.etiqueta + '</span>' : '') +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="track-right-actions">' +
+            '<span>' + (item.duracion || "3:00") + '</span>' +
+            '<span style="color:var(--rosa);">♥</span>' +
+          '</div>';
+
+        card.addEventListener("click", function () {
+          if (estado.pista === idx && estado.sonando) {
+            pausar();
+          } else {
+            reproducir(idx);
+          }
+        });
+
+        listContainer.appendChild(card);
+      });
+    }
+
+    renderizarPistas("all");
+
+    // Pestañas de filtrado (Todas, Cara A, Cara B)
+    var filterBtns = document.querySelectorAll(".track-tab-btn");
+    filterBtns.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        filterBtns.forEach(function (b) { b.classList.remove("activo"); });
+        btn.classList.add("activo");
+        filtroActual = btn.getAttribute("data-side");
+        renderizarPistas(filtroActual);
+      });
+    });
+
+    // Botones físicos del Cassette Deck
+    var btnDeckPlay = document.getElementById("btn-deck-play");
+    var btnDeckPrev = document.getElementById("btn-deck-prev");
+    var btnDeckNext = document.getElementById("btn-deck-next");
+    var btnDeckLoop = document.getElementById("btn-deck-loop");
+    var btnDeckMute = document.getElementById("btn-deck-mute");
+    var volSlider = document.getElementById("deck-vol-slider");
+
+    if (btnDeckPlay) {
+      btnDeckPlay.addEventListener("click", function () {
+        if (estado.sonando) {
+          pausar();
+        } else {
+          reproducir(estado.pista);
+        }
+      });
+    }
+
+    if (btnDeckPrev) {
+      btnDeckPrev.addEventListener("click", function () {
+        var ant = (estado.pista - 1 + canciones.length) % canciones.length;
+        reproducir(ant);
+      });
+    }
+
+    if (btnDeckNext) {
+      btnDeckNext.addEventListener("click", function () {
+        var sig = (estado.pista + 1) % canciones.length;
+        reproducir(sig);
+      });
+    }
+
+    if (btnDeckLoop) {
+      btnDeckLoop.addEventListener("click", function () {
+        if (estado.audio) {
+          estado.audio.loop = !estado.audio.loop;
+          btnDeckLoop.classList.toggle("activo", estado.audio.loop);
+        }
+      });
+    }
+
+    if (btnDeckMute) {
+      btnDeckMute.addEventListener("click", function () {
+        toggleMute();
+      });
+    }
+
+    if (volSlider) {
+      volSlider.addEventListener("input", function () {
+        if (estado.audio) {
+          estado.audio.volume = parseFloat(this.value);
+        }
+      });
+    }
+
+    // Scrubber con click para saltar en la canción
+    var scrubber = document.getElementById("deck-scrubber");
+    if (scrubber) {
+      scrubber.addEventListener("click", function (e) {
+        if (!estado.audio || !estado.audio.duration) return;
+        var rect = scrubber.getBoundingClientRect();
+        var clickX = e.clientX - rect.left;
+        var pct = Math.max(0, Math.min(1, clickX / rect.width));
+        estado.audio.currentTime = pct * estado.audio.duration;
+      });
+    }
+
+    // Botón de sintonía Chiptune de Aniversario
+    var btnAnthem = document.getElementById("btn-chiptune-anthem");
+    if (btnAnthem) {
+      btnAnthem.addEventListener("click", function () {
+        playChiptuneAnthem();
+      });
+    }
+
+    // Cargar archivo local MP3
+    var fileInput = document.getElementById("input-local-song");
+    if (fileInput) {
+      fileInput.addEventListener("change", function (e) {
+        var file = e.target.files && e.target.files[0];
+        if (file) {
+          var objectUrl = URL.createObjectURL(file);
+          var customTrack = {
+            id: "local-" + Date.now(),
+            lado: "A",
+            pistaNum: "★-01",
+            titulo: file.name.replace(/\.[^/.]+$/, ""),
+            artista: "Tu Archivo MP3",
+            duracion: "--:--",
+            etiqueta: "Subida por ti ♥",
+            nota: "Canción añadida al momento desde tu ordenador para nuestra cita.",
+            letra: "«Nuestra banda sonora personalizada al instante.»",
+            archivo: objectUrl
+          };
+          window.MUSICA.unshift(customTrack);
+          renderizarPistas(filtroActual);
+          reproducir(0);
+        }
+      });
+    }
+
+    // Mini Pianito Chiptune 8-Bit
+    var pianoKeys = document.querySelectorAll("#chiptune-piano-keys .piano-key");
+    pianoKeys.forEach(function (key) {
+      key.addEventListener("click", function () {
+        var noteFreq = parseFloat(key.getAttribute("data-note"));
+        playChiptuneTone(noteFreq, 0.35, "square", 0.18);
+        key.classList.add("tocado");
+        setTimeout(function () {
+          key.classList.remove("tocado");
+        }, 150);
+      });
+    });
   }
 
   /* ══════════════════════════════════════════════════════════════
@@ -1400,6 +1744,7 @@
     initMapa();
     initDibujo();
     initReproductor();
+    initPlaylistSection();
   }
 
   if (document.readyState === "loading") {

@@ -613,13 +613,202 @@
             </div>
           </section>
 
+          <!-- ═══════ SECCIÓN PLAYLIST & CASSETTE RETRO ═══════ -->
           <section id="seccion-canciones" class="seccion">
-            <div class="en-construccion-box">
-              <svg class="en-construccion-icon" viewBox="0 0 16 16">
-                <path d="M6 2h8v2H8v6a3 3 0 11-2-2.8V2zm0 8a1 1 0 100 2 1 1 0 000-2z"/>
-              </svg>
-              <h3 style="font-family: var(--font-title); font-size: 24px;">Playlist compartida ♥</h3>
-              <p style="color: var(--linea);">Todas las canciones que marcan nuestra banda sonora.</p>
+            <div class="box-panel">
+              <div class="box-tab">
+                <svg class="pixel-icon" style="fill: var(--linea);" viewBox="0 0 16 16">
+                  <path d="M6 2h8v2H8v6a3 3 0 11-2-2.8V2zm0 8a1 1 0 100 2 1 1 0 000-2z"/>
+                </svg>
+                <span>mixtape ✧</span>
+              </div>
+
+              <div style="margin-bottom: 14px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                <div>
+                  <h2 style="font-family: var(--font-title); font-size: 26px; color: var(--borde-oscuro);">Nuestra Banda Sonora</h2>
+                  <p style="font-size: 14px; color: var(--linea);">Las canciones que han puesto ritmo a estos 5 años juntos: viajes, festivales y tardes en casa ♥</p>
+                </div>
+                <div class="playlist-header-actions">
+                  <button id="btn-chiptune-anthem" class="btn-tool-pill special-save" type="button" title="Tocar sintonía de aniversario en 8-bit">
+                    <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M6 2h8v2H8v6a3 3 0 11-2-2.8V2zm0 8a1 1 0 100 2 1 1 0 000-2z"/></svg>
+                    <span>♪ Melodía 8-Bit</span>
+                  </button>
+                  <label class="btn-tool-pill" title="Cargar cualquier canción .mp3 desde tu ordenador" style="cursor: pointer; margin-bottom: 0;">
+                    <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M7 1v8h2V1H7zm-3 7l4 4 4-4H4zm-2 5h12v2H2v-2z"/></svg>
+                    <span>Cargar MP3</span>
+                    <input type="file" id="input-local-song" accept="audio/*" style="display:none;">
+                  </label>
+                </div>
+              </div>
+
+              <!-- CONTENEDOR PRINCIPAL: CASSETTE / REPRODUCTOR + LISTA -->
+              <div class="playlist-grid-layout">
+
+                <!-- COLUMNA IZQUIERDA: CASSETTE RETRO ILUSTRADO -->
+                <div class="cassette-deck-card">
+                  <!-- Carcasa del Cassette -->
+                  <div class="cassette-body" id="cassette-visual-deck">
+                    <div class="cassette-top-ridge">
+                      <div class="ridge-screw"></div>
+                      <div class="ridge-center-notch"></div>
+                      <div class="ridge-screw"></div>
+                    </div>
+                    
+                    <div class="cassette-label-sticker">
+                      <div class="cassette-sticker-header">
+                        <span class="cassette-side-indicator" id="cassette-side-tag">CARA A</span>
+                        <span class="cassette-title-brand">MIXTAPE VOL. 5 ♥</span>
+                        <span class="cassette-speed">DOLBY B NR</span>
+                      </div>
+                      
+                      <!-- Ventana central transparente con los carretes -->
+                      <div class="cassette-window">
+                        <div class="cassette-spool left-spool" id="spool-left">
+                          <div class="spool-inner"></div>
+                          <div class="spool-teeth"></div>
+                        </div>
+                        <div class="cassette-tape-view">
+                          <div class="tape-ribbon" id="tape-ribbon-fill"></div>
+                          <div class="tape-ruler-marks">
+                            <span>100</span><span>50</span><span>0</span>
+                          </div>
+                        </div>
+                        <div class="cassette-spool right-spool" id="spool-right">
+                          <div class="spool-inner"></div>
+                          <div class="spool-teeth"></div>
+                        </div>
+                      </div>
+
+                      <div class="cassette-label-lines">
+                        <div class="cassette-now-playing-label" id="deck-display-title">Cargando sintonía...</div>
+                        <div class="cassette-now-playing-sub" id="deck-display-artist">Maca & Edu</div>
+                      </div>
+                    </div>
+
+                    <div class="cassette-bottom-ridge">
+                      <div class="bottom-trapezoid">
+                        <div class="cassette-head-hole"></div>
+                        <div class="cassette-roller-hole"></div>
+                        <div class="cassette-head-hole"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Pantallita LCD de Estado y Ecualizador -->
+                  <div class="deck-lcd-screen">
+                    <div class="deck-lcd-left">
+                      <span class="deck-time-digital" id="deck-time-current">00:00</span>
+                      <span class="deck-time-sep">/</span>
+                      <span class="deck-time-digital" id="deck-time-total">00:00</span>
+                    </div>
+
+                    <!-- Ecualizador de barritas pixel -->
+                    <div class="retro-equalizer-bars" id="deck-eq-bars" aria-hidden="true">
+                      <span class="eq-bar eq-b1"></span>
+                      <span class="eq-bar eq-b2"></span>
+                      <span class="eq-bar eq-b3"></span>
+                      <span class="eq-bar eq-b4"></span>
+                      <span class="eq-bar eq-b5"></span>
+                      <span class="eq-bar eq-b6"></span>
+                      <span class="eq-bar eq-b7"></span>
+                      <span class="eq-bar eq-b8"></span>
+                    </div>
+
+                    <div class="deck-lcd-status">
+                      <span id="deck-status-badge" class="deck-badge">EN PAUSA</span>
+                    </div>
+                  </div>
+
+                  <!-- Barra de Progreso Interactivo con Scrubbing -->
+                  <div class="deck-scrubber-wrapper" id="deck-scrubber" title="Haz clic en cualquier punto para avanzar o retroceder">
+                    <div class="deck-scrubber-track">
+                      <div class="deck-scrubber-fill" id="deck-scrubber-fill"></div>
+                      <div class="deck-scrubber-thumb" id="deck-scrubber-thumb"></div>
+                    </div>
+                  </div>
+
+                  <!-- Botonera física tipo Walkman de los 90s -->
+                  <div class="deck-physical-buttons">
+                    <button class="deck-btn" id="btn-deck-prev" type="button" title="Pista anterior">
+                      <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M13 2L5 8l8 6V2zM3 2h2v12H3V2z"/></svg>
+                      <span class="deck-btn-label">REW</span>
+                    </button>
+                    <button class="deck-btn deck-btn-play" id="btn-deck-play" type="button" title="Reproducir o Pausar">
+                      <svg id="deck-icon-play" class="pixel-icon" viewBox="0 0 16 16"><path d="M4 2l10 6-10 6V2z"/></svg>
+                      <svg id="deck-icon-pause" class="pixel-icon" style="display:none;" viewBox="0 0 16 16"><path d="M3 2h3v12H3V2zm7 0h3v12h-3V2z"/></svg>
+                      <span class="deck-btn-label" id="deck-btn-label-play">PLAY</span>
+                    </button>
+                    <button class="deck-btn" id="btn-deck-next" type="button" title="Siguiente pista">
+                      <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M3 2l8 6-8 6V2zm10 0h2v12h-2V2z"/></svg>
+                      <span class="deck-btn-label">FFWD</span>
+                    </button>
+                    <button class="deck-btn" id="btn-deck-loop" type="button" title="Repetir canción en bucle">
+                      <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M2 3h10v3l3-3-3-3v2H1v6h2V3zm12 10H4v-3l-3 3 3 3v-2h11V8h-2v5z"/></svg>
+                      <span class="deck-btn-label">LOOP</span>
+                    </button>
+                    <button class="deck-btn" id="btn-deck-mute" type="button" title="Silenciar / Activar sonido">
+                      <svg id="deck-icon-vol" class="pixel-icon" viewBox="0 0 16 16"><path d="M2 5h3l4-3v12l-4-3H2V5zm10 1a4 4 0 010 4v-1a3 3 0 000-2v-1z"/></svg>
+                      <svg id="deck-icon-muted" class="pixel-icon" style="display:none;" viewBox="0 0 16 16"><path d="M2 5h3l4-3v12l-4-3H2V5zm12 1l-2 2 2 2-1 1-2-2-2 2-1-1 2-2-2-2 1-1 2 2 2-2 1 1z"/></svg>
+                      <span class="deck-btn-label">MUTE</span>
+                    </button>
+                  </div>
+
+                  <!-- Control deslizante de Volumen -->
+                  <div class="deck-volume-row">
+                    <span style="font-size: 11px; font-weight: bold; color: var(--borde-oscuro);">VOLUMEN</span>
+                    <input type="range" id="deck-vol-slider" min="0" max="1" step="0.05" value="0.7" class="retro-range-slider" aria-label="Volumen">
+                  </div>
+
+                  <!-- Mini Pianito Chiptune Interactivo de 8 notas para jugar -->
+                  <div class="chiptune-piano-card">
+                    <div class="piano-title-bar">
+                      <span>✦ Mini Sintetizador 8-Bit Pixel</span>
+                      <small style="color:var(--linea);">¡Toca una escala o inventa una melodía!</small>
+                    </div>
+                    <div class="piano-keys-row" id="chiptune-piano-keys">
+                      <button class="piano-key" data-note="261.63" type="button"><span>DO</span><small>C4</small></button>
+                      <button class="piano-key" data-note="293.66" type="button"><span>RE</span><small>D4</small></button>
+                      <button class="piano-key" data-note="329.63" type="button"><span>MI</span><small>E4</small></button>
+                      <button class="piano-key" data-note="349.23" type="button"><span>FA</span><small>F4</small></button>
+                      <button class="piano-key" data-note="392.00" type="button"><span>SOL</span><small>G4</small></button>
+                      <button class="piano-key" data-note="440.00" type="button"><span>LA</span><small>A4</small></button>
+                      <button class="piano-key" data-note="493.88" type="button"><span>SI</span><small>B4</small></button>
+                      <button class="piano-key" data-note="523.25" type="button"><span>DO'</span><small>C5</small></button>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- COLUMNA DERECHA: LISTA DE CANCIONES (CARA A & CARA B) -->
+                <div class="playlist-tracks-panel">
+                  <div class="tracks-filter-tabs">
+                    <button class="track-tab-btn activo" data-side="all" type="button">Todas las pistas</button>
+                    <button class="track-tab-btn" data-side="A" type="button">Cara A (Viajes & Recuerdos)</button>
+                    <button class="track-tab-btn" data-side="B" type="button">Cara B (Festis & Madrid)</button>
+                  </div>
+
+                  <div class="tracks-list-container" id="playlist-tracks-list">
+                    <!-- Renderizado dinámicamente con JS -->
+                  </div>
+
+                  <!-- Tarjeta especial con anécdota/letra seleccionada -->
+                  <div class="track-dedication-box" id="track-dedication-box">
+                    <div class="dedication-header">
+                      <svg class="pixel-icon" style="fill:var(--rosa);" viewBox="0 0 16 16"><path d="M8 14s-6-3.8-6-8a4 4 0 017-2.6A4 4 0 0114 6c0 4.2-6 8-6 8z"/></svg>
+                      <strong id="dedication-track-name">Sobre esta canción ♥</strong>
+                    </div>
+                    <p id="dedication-note-text" class="dedication-text">
+                      Selecciona una pista de la lista para leer su anécdota y recuerdo especial.
+                    </p>
+                    <div id="dedication-quote" class="dedication-quote">
+                      «...»
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
             </div>
           </section>
 
