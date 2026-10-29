@@ -1771,3 +1771,238 @@ button {
   }
 }
 
+/* ── ESTUDIO DE DIBUJO Y GARABATOS RETRO-CUTE ─────────────────── */
+.canvas-actions-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-tool-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--panel-light);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: var(--radius-pill);
+  box-shadow: 2px 2px 0px var(--borde-oscuro);
+  font-family: var(--font-title);
+  font-size: 13px;
+  color: var(--borde-oscuro);
+  cursor: pointer;
+  transition: all .12s;
+}
+
+.btn-tool-pill:hover {
+  background: #fff;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--linea);
+}
+
+.btn-tool-pill:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px var(--borde-oscuro);
+}
+
+.btn-tool-pill.special-save {
+  background: var(--rosa);
+  font-weight: bold;
+}
+
+.btn-tool-pill.special-save:hover {
+  background: var(--rosa-hover);
+}
+
+.btn-tool-pill .pixel-icon {
+  width: 14px;
+  height: 14px;
+  fill: var(--borde-oscuro);
+}
+
+/* Barra de herramientas */
+.draw-toolbar-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  background: var(--panel-light);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  box-shadow: var(--pixel-shadow-sm);
+}
+
+.tool-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 10px;
+  border-right: 2px dotted rgba(29, 43, 74, 0.25);
+}
+
+.tool-group:last-child {
+  border-right: none;
+  padding-right: 0;
+}
+
+.btn-draw-tool {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 8px;
+  background: var(--crema);
+  box-shadow: 2px 2px 0px var(--borde-oscuro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all .1s;
+}
+
+.btn-draw-tool.activo {
+  background: var(--linea);
+  box-shadow: inset 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+.btn-draw-tool.activo .pixel-icon {
+  fill: #fff;
+}
+
+/* Grosores */
+.btn-stroke-size {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 6px;
+  background: var(--crema);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.btn-stroke-size span {
+  background: var(--borde-oscuro);
+  border-radius: 50%;
+  display: block;
+}
+
+.btn-stroke-size.activo {
+  background: var(--linea);
+  border-color: var(--borde-oscuro);
+}
+
+.btn-stroke-size.activo span {
+  background: #fff;
+}
+
+/* Paleta de colores */
+.color-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--borde-oscuro);
+  cursor: pointer;
+  box-shadow: 1px 1px 0px rgba(0,0,0,0.15);
+  transition: transform .1s;
+}
+
+.color-swatch:hover {
+  transform: scale(1.15);
+}
+
+.color-swatch.activo {
+  transform: scale(1.25);
+  outline: 2px solid var(--linea);
+  outline-offset: 2px;
+}
+
+/* Sellos */
+.btn-stamp-tool {
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 6px;
+  background: var(--crema);
+  box-shadow: 2px 2px 0px var(--borde-oscuro);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all .1s;
+}
+
+.btn-stamp-tool.activo {
+  background: var(--rosa);
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px var(--borde-oscuro);
+}
+
+/* Marco del lienzo de dibujo */
+.draw-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  background: #fffdf7;
+  border: 3px solid var(--borde-oscuro);
+  border-radius: var(--radius-box);
+  box-shadow: var(--pixel-shadow);
+  overflow: hidden;
+  /* Textura de libreta cuadriculada suave */
+  background-image: 
+    linear-gradient(rgba(59, 140, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 140, 255, 0.08) 1px, transparent 1px);
+  background-size: 20px 20px;
+  touch-action: none; /* esencial para dibujar en táctil sin desplazar la pantalla */
+}
+
+#paint-canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  cursor: crosshair;
+}
+
+/* Notificación flotante de guardado */
+.saved-toast {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-30px);
+  background: var(--rosa);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: var(--radius-pill);
+  box-shadow: 3px 3px 0px var(--borde-oscuro);
+  padding: 6px 18px;
+  font-family: var(--font-title);
+  font-size: 14px;
+  color: var(--borde-oscuro);
+  font-weight: bold;
+  opacity: 0;
+  pointer-events: none;
+  transition: all .25s ease;
+  z-index: 100;
+}
+
+.saved-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 768px) {
+  .draw-toolbar-panel {
+    gap: 8px;
+    padding: 6px 8px;
+  }
+  .tool-group {
+    padding-right: 6px;
+  }
+  .canvas-actions-bar {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+

@@ -516,13 +516,90 @@
             </div>
           </section>
 
+          <!-- ═══════ SECCIÓN DIBUJO RETRO INTERACTIVO ═══════ -->
           <section id="seccion-dibujo" class="seccion">
-            <div class="en-construccion-box">
-              <svg class="en-construccion-icon" viewBox="0 0 16 16">
-                <path d="M13 1l2 2-9 9H4v-2l9-9zm-1 3.4L10.6 3 3 10.6V12h1.4L12 4.4zM1 14h14v2H1v-2z"/>
-              </svg>
-              <h3 style="font-family: var(--font-title); font-size: 24px;">Dibujo en construcción ♥</h3>
-              <p style="color: var(--linea);">Un rincón de lienzos y garabatos compartidos.</p>
+            <div class="box-panel">
+              <div class="box-tab">
+                <svg class="pixel-icon" style="fill: var(--linea);" viewBox="0 0 16 16">
+                  <path d="M13 1l2 2-9 9H4v-2l9-9zm-1 3.4L10.6 3 3 10.6V12h1.4L12 4.4zM1 14h14v2H1v-2z"/>
+                </svg>
+                <span>garabatos ✧</span>
+              </div>
+
+              <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                <div>
+                  <h2 style="font-family: var(--font-title); font-size: 26px; color: var(--borde-oscuro);">Nuestro rincón de dibujo</h2>
+                  <p style="font-size: 14px; color: var(--linea);">Dibuja con el dedo o ratón, pon sellos pixel y guarda tu dedicatoria ♥</p>
+                </div>
+
+                <!-- Acciones de guardar / descargar / limpiar -->
+                <div class="canvas-actions-bar">
+                  <button id="btn-draw-clear" class="btn-tool-pill" type="button" title="Limpiar lienzo">
+                    <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M2 3h12v2H2V3zm2 3h8v9H4V6zm2 2v5h1V8H6zm3 0v5h1V8H9z"/></svg>
+                    <span>Limpiar</span>
+                  </button>
+                  <button id="btn-draw-save" class="btn-tool-pill special-save" type="button" title="Guardar en nuestro rincón">
+                    <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M2 3h3v2H2zm9 0h3v2h-3zM1 5h14v4H1zm1 4h12v2H2zm2 2h8v2H4zm2 2h4v2H6z"/></svg>
+                    <span>Guardar ♥</span>
+                  </button>
+                  <button id="btn-draw-download" class="btn-tool-pill" type="button" title="Descargar como imagen">
+                    <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M7 1h2v7h3l-4 4-4-4h3V1zM2 13h12v2H2v-2z"/></svg>
+                    <span>Descargar</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Barra de herramientas (Colores, Herramientas, Sellos) -->
+              <div class="draw-toolbar-panel">
+
+                <!-- Modos: Pincel o Goma -->
+                <div class="tool-group">
+                  <button id="tool-brush" class="btn-draw-tool activo" type="button" title="Pincel">
+                    <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M11 1l4 4-8 8H3v-4l8-8z"/></svg>
+                  </button>
+                  <button id="tool-eraser" class="btn-draw-tool" type="button" title="Goma de borrar">
+                    <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M9 2l6 6-7 7H2v-6l7-7zm-4 8H3v3h5l-3-3z"/></svg>
+                  </button>
+                </div>
+
+                <!-- Grosores de trazo -->
+                <div class="tool-group">
+                  <button class="btn-stroke-size" data-size="3" type="button" title="Fino"><span style="width:4px; height:4px;"></span></button>
+                  <button class="btn-stroke-size activo" data-size="6" type="button" title="Medio"><span style="width:8px; height:8px;"></span></button>
+                  <button class="btn-stroke-size" data-size="12" type="button" title="Grueso"><span style="width:12px; height:12px;"></span></button>
+                </div>
+
+                <!-- Paleta de colores retro -->
+                <div class="tool-group color-palette-group" aria-label="Colores">
+                  <button class="color-swatch activo" data-color="#1d2b4a" style="background:#1d2b4a;" type="button" title="Tinta oscura"></button>
+                  <button class="color-swatch" data-color="#3b8cff" style="background:#3b8cff;" type="button" title="Azul cielo"></button>
+                  <button class="color-swatch" data-color="#ff9ebb" style="background:#ff9ebb;" type="button" title="Rosa pastel"></button>
+                  <button class="color-swatch" data-color="#ff4b72" style="background:#ff4b72;" type="button" title="Cereza"></button>
+                  <button class="color-swatch" data-color="#ffd166" style="background:#ffd166;" type="button" title="Amarillo pastel"></button>
+                  <button class="color-swatch" data-color="#06d6a0" style="background:#06d6a0;" type="button" title="Menta verde"></button>
+                </div>
+
+                <!-- Sellos pixel art listos para estampar -->
+                <div class="tool-group stamp-group">
+                  <span style="font-size:11px; color:var(--borde-oscuro); font-weight:bold; margin-right:4px;">Sellos:</span>
+                  <button class="btn-stamp-tool" data-stamp="heart" type="button" title="Sello Corazón">♥</button>
+                  <button class="btn-stamp-tool" data-stamp="star" type="button" title="Sello Destello">✦</button>
+                  <button class="btn-stamp-tool" data-stamp="cat" type="button" title="Sello Gatito">🐱</button>
+                  <button class="btn-stamp-tool" data-stamp="flower" type="button" title="Sello Flor">✿</button>
+                </div>
+
+              </div>
+
+              <!-- Lienzo de dibujo con marco cuadriculado retro -->
+              <div class="draw-canvas-wrapper" id="draw-canvas-wrapper">
+                <canvas id="paint-canvas" width="760" height="460"></canvas>
+                <div id="draw-saved-toast" class="saved-toast">✓ ¡Dibujo guardado en nuestro rincón! ♥</div>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; font-size:12px; color:var(--linea);">
+                <span>Tip: Si seleccionas un sello, haz clic sobre el lienzo donde quieras estamparlo ✧</span>
+                <span id="draw-status-msg" style="font-weight:bold; color:var(--borde-oscuro);">Lienzo listo</span>
+              </div>
             </div>
           </section>
 

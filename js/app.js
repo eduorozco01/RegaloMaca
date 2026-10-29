@@ -1102,6 +1102,293 @@
   }
 
   /* ══════════════════════════════════════════════════════════════
+   *  SECCIÓN DIBUJO Y GARABATOS INTERACTIVOS RETRO
+   * ══════════════════════════════════════════════════════════════ */
+  function initDibujo() {
+    var canvas = document.getElementById("paint-canvas");
+    if (!canvas) return;
+    var ctx = canvas.getContext("2d");
+
+    var estadoDibujo = {
+      dibujando: false,
+      modo: "brush", // "brush", "eraser", "stamp"
+      color: "#1d2b4a",
+      grosor: 6,
+      selloActual: "heart",
+      ultimoX: 0,
+      ultimoY: 0
+    };
+
+    // Ajustar resolución interna nítida
+    canvas.width = 760;
+    canvas.height = 460;
+
+    // Cargar dibujo previo o dibujar bienvenida
+    var dibujoGuardado = localStorage.getItem("maca_dibujo_guardado");
+    if (dibujoGuardado) {
+      cargarImagenEnCanvas(dibujoGuardado);
+    } else {
+      dibujarLienzoInicial(ctx);
+    }
+
+    function dibujarLienzoInicial(c) {
+      c.clearRect(0, 0, canvas.width, canvas.height);
+      // Mensaje tierno de dedicatoria inicial
+      c.fillStyle = "#ff9ebb";
+      c.font = "bold 26px 'Pixelify Sans', cursive, sans-serif";
+      c.textAlign = "center";
+      c.fillText("¡Dibuja algo bonito aquí! ♥", canvas.width / 2, 190);
+
+      c.fillStyle = "#3b8cff";
+      c.font = "16px 'DotGothic16', monospace";
+      c.fillText("Usa los colores, la goma o los sellos de arriba", canvas.width / 2, 230);
+      c.fillText("y pulsa 'Guardar ♥' para dejarlo en nuestro rincón", canvas.width / 2, 260);
+
+      // Pequeño corazón pixel dibujado en el centro
+      c.fillStyle = "#ff4b72";
+      var hx = canvas.width / 2 - 12, hy = 110;
+      c.fillRect(hx+4, hy, 6, 4); c.fillRect(hx+14, hy, 6, 4);
+      c.fillRect(hx+2, hy+4, 20, 6);
+      c.fillRect(hx+4, hy+10, 16, 4);
+      c.fillRect(hx+7, hy+14, 10, 4);
+      c.fillRect(hx+10, hy+18, 4, 4);
+    }
+
+    function cargarImagenEnCanvas(dataUrl) {
+      var img = new Image();
+      img.onload = function () {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      };
+      img.src = dataUrl;
+    }
+
+    function obtenerPosicion(e) {
+      var rect = canvas.getBoundingClientRect();
+      var scaleX = canvas.width / rect.width;
+      var scaleY = canvas.height / rect.height;
+      var clientX = e.clientX;
+      var clientY = e.clientY;
+
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      }
+
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+      };
+    }
+
+    function empezarTrazo(e) {
+      var pos = obtenerPosicion(e);
+
+      if (estadoDibujo.modo === "stamp") {
+        estamparSello(pos.x, pos.y);
+        return;
+      }
+
+      estadoDibujo.dibujando = true;
+      estadoDibujo.ultimoX = pos.x;
+      estadoDibujo.ultimoY = pos.y;
+
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, estadoDibujo.grosor / 2, 0, Math.PI * 2);
+      ctx.fillStyle = (estadoDibujo.modo === "eraser") ? "#fffdf7" : estadoDibujo.color;
+      if (estadoDibujo.modo === "eraser") {
+        ctx.globalCompositeOperation = "destination-out";
+      } else {
+        ctx.globalCompositeOperation = "source-over";
+      }
+      ctx.fill();
+    }
+
+    function trazar(e) {
+      if (!estadoDibujo.dibujando) return;
+      e.preventDefault();
+      var pos = obtenerPosicion(e);
+
+      ctx.beginPath();
+      ctx.moveTo(estadoDibujo.ultimoX, estadoDibujo.ultimoY);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.strokeStyle = (estadoDibujo.modo === "eraser") ? "#fffdf7" : estadoDibujo.color;
+      ctx.lineWidth = estadoDibujo.grosor;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+
+      if (estadoDibujo.modo === "eraser") {
+        ctx.globalCompositeOperation = "destination-out";
+      } else {
+        ctx.globalCompositeOperation = "source-over";
+      }
+      ctx.stroke();
+
+      estadoDibujo.ultimoX = pos.x;
+      estadoDibujo.ultimoY = pos.y;
+    }
+
+    function terminarTrazo() {
+      estadoDibujo.dibujando = false;
+    }
+
+    function estamparSello(x, y) {
+      ctx.globalCompositeOperation = "source-over";
+      var s = estadoDibujo.selloActual;
+
+      if (s === "heart") {
+        ctx.fillStyle = estadoDibujo.color === "#fffdf7" ? "#ff4b72" : estadoDibujo.color;
+        var hx = x - 12, hy = y - 12;
+        ctx.fillRect(hx+4, hy, 6, 4); ctx.fillRect(hx+14, hy, 6, 4);
+        ctx.fillRect(hx+2, hy+4, 20, 6);
+        ctx.fillRect(hx+4, hy+10, 16, 4);
+        ctx.fillRect(hx+7, hy+14, 10, 4);
+        ctx.fillRect(hx+10, hy+18, 4, 4);
+      } else if (s === "star") {
+        ctx.fillStyle = estadoDibujo.color;
+        ctx.fillRect(x - 2, y - 14, 4, 28);
+        ctx.fillRect(x - 14, y - 2, 28, 4);
+        ctx.fillRect(x - 6, y - 6, 12, 12);
+      } else if (s === "cat") {
+        ctx.font = "28px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("🐱", x, y);
+      } else if (s === "flower") {
+        ctx.font = "28px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("✿", x, y);
+      }
+    }
+
+    // Eventos de puntero unificados (ratón, pantalla táctil y stylus)
+    canvas.addEventListener("pointerdown", empezarTrazo);
+    window.addEventListener("pointermove", trazar);
+    window.addEventListener("pointerup", terminarTrazo);
+
+    // Controles de herramientas
+    var toolBrush = document.getElementById("tool-brush");
+    var toolEraser = document.getElementById("tool-eraser");
+    var statusMsg = document.getElementById("draw-status-msg");
+
+    if (toolBrush) {
+      toolBrush.addEventListener("click", function () {
+        estadoDibujo.modo = "brush";
+        toolBrush.classList.add("activo");
+        if (toolEraser) toolEraser.classList.remove("activo");
+        document.querySelectorAll(".btn-stamp-tool").forEach(function (b) { b.classList.remove("activo"); });
+        if (statusMsg) statusMsg.textContent = "Pincel activo";
+      });
+    }
+
+    if (toolEraser) {
+      toolEraser.addEventListener("click", function () {
+        estadoDibujo.modo = "eraser";
+        toolEraser.classList.add("activo");
+        if (toolBrush) toolBrush.classList.remove("activo");
+        document.querySelectorAll(".btn-stamp-tool").forEach(function (b) { b.classList.remove("activo"); });
+        if (statusMsg) statusMsg.textContent = "Goma de borrar activa";
+      });
+    }
+
+    // Grosores
+    document.querySelectorAll(".btn-stroke-size").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        document.querySelectorAll(".btn-stroke-size").forEach(function (b) { b.classList.remove("activo"); });
+        btn.classList.add("activo");
+        estadoDibujo.grosor = parseInt(btn.getAttribute("data-size"), 10) || 6;
+      });
+    });
+
+    // Colores
+    document.querySelectorAll(".color-swatch").forEach(function (swatch) {
+      swatch.addEventListener("click", function () {
+        document.querySelectorAll(".color-swatch").forEach(function (s) { s.classList.remove("activo"); });
+        swatch.classList.add("activo");
+        estadoDibujo.color = swatch.getAttribute("data-color");
+        if (estadoDibujo.modo === "eraser") {
+          toolBrush.click();
+        }
+      });
+    });
+
+    // Sellos
+    document.querySelectorAll(".btn-stamp-tool").forEach(function (stampBtn) {
+      stampBtn.addEventListener("click", function () {
+        document.querySelectorAll(".btn-stamp-tool").forEach(function (b) { b.classList.remove("activo"); });
+        stampBtn.classList.add("activo");
+        if (toolBrush) toolBrush.classList.remove("activo");
+        if (toolEraser) toolEraser.classList.remove("activo");
+
+        estadoDibujo.modo = "stamp";
+        estadoDibujo.selloActual = stampBtn.getAttribute("data-stamp");
+        if (statusMsg) statusMsg.textContent = "Sello listo: haz clic en el lienzo";
+      });
+    });
+
+    // Botón Limpiar
+    var btnClear = document.getElementById("btn-draw-clear");
+    if (btnClear) {
+      btnClear.addEventListener("click", function () {
+        if (confirm("¿Quieres limpiar todo el lienzo para empezar de nuevo?")) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          localStorage.removeItem("maca_dibujo_guardado");
+          if (statusMsg) statusMsg.textContent = "Lienzo limpio";
+        }
+      });
+    }
+
+    // Botón Guardar
+    var btnSave = document.getElementById("btn-draw-save");
+    var toast = document.getElementById("draw-saved-toast");
+    if (btnSave) {
+      btnSave.addEventListener("click", function () {
+        try {
+          var dataUrl = canvas.toDataURL("image/png");
+          localStorage.setItem("maca_dibujo_guardado", dataUrl);
+          if (toast) {
+            toast.classList.add("visible");
+            setTimeout(function () { toast.classList.remove("visible"); }, 1800);
+          }
+          if (statusMsg) statusMsg.textContent = "✓ ¡Guardado en la web!";
+        } catch (err) {
+          alert("No se pudo guardar: " + err.message);
+        }
+      });
+    }
+
+    // Botón Descargar PNG
+    var btnDownload = document.getElementById("btn-draw-download");
+    if (btnDownload) {
+      btnDownload.addEventListener("click", function () {
+        // Creamos un canvas temporal con fondo blanco/crema para la descarga
+        var tempCanvas = document.createElement("canvas");
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+        var tempCtx = tempCanvas.getContext("2d");
+
+        // Fondo crema de papel
+        tempCtx.fillStyle = "#fffdf7";
+        tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+        // Dibujo
+        tempCtx.drawImage(canvas, 0, 0);
+
+        // Estampar firma de aniversario
+        tempCtx.fillStyle = "#ff9ebb";
+        tempCtx.font = "bold 14px monospace";
+        tempCtx.textAlign = "right";
+        tempCtx.fillText("5 años juntos ♥", tempCanvas.width - 20, tempCanvas.height - 18);
+
+        var link = document.createElement("a");
+        link.download = "nuestro-dibujo-5-anos.png";
+        link.href = tempCanvas.toDataURL("image/png");
+        link.click();
+      });
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════════
    *  INICIALIZACIÓN GENERAL
    * ══════════════════════════════════════════════════════════════ */
   function init() {
@@ -1111,6 +1398,7 @@
     initTamagotchi();
     initTimeline();
     initMapa();
+    initDibujo();
     initReproductor();
   }
 
