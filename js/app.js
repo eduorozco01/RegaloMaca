@@ -107,6 +107,21 @@
       });
     }
 
+    // Si entramos a la habitación de la mascota, refrescar la miniatura del dibujo en la pared
+    if (id === "mascota") {
+      var drawingImg = document.getElementById("pet-room-drawing-img");
+      var emptyPlaceholder = document.getElementById("gallery-empty-state");
+      var savedDrawing = localStorage.getItem("maca_dibujo_guardado");
+      if (savedDrawing && drawingImg && emptyPlaceholder) {
+        drawingImg.src = savedDrawing;
+        drawingImg.style.display = "block";
+        emptyPlaceholder.style.display = "none";
+      } else if (drawingImg && emptyPlaceholder) {
+        drawingImg.style.display = "none";
+        emptyPlaceholder.style.display = "flex";
+      }
+    }
+
     document.querySelectorAll(".nav-pill-btn").forEach(function (btn) {
       btn.classList.toggle("activo", btn.getAttribute("data-seccion") === id);
     });
@@ -1679,6 +1694,12 @@
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           localStorage.removeItem("maca_dibujo_guardado");
           if (statusMsg) statusMsg.textContent = "Lienzo limpio";
+          var roomImg = document.getElementById("pet-room-drawing-img");
+          var emptyPh = document.getElementById("gallery-empty-state");
+          if (roomImg && emptyPh) {
+            roomImg.style.display = "none";
+            emptyPh.style.display = "flex";
+          }
         }
       });
     }
@@ -1695,7 +1716,15 @@
             toast.classList.add("visible");
             setTimeout(function () { toast.classList.remove("visible"); }, 1800);
           }
-          if (statusMsg) statusMsg.textContent = "✓ ¡Guardado en la web!";
+          if (statusMsg) statusMsg.textContent = "✓ ¡Guardado en la web y colgado en la habitación!";
+          // Actualizar la miniatura en la habitación de la mascota al instante
+          var roomImg = document.getElementById("pet-room-drawing-img");
+          var emptyPh = document.getElementById("gallery-empty-state");
+          if (roomImg && emptyPh) {
+            roomImg.src = dataUrl;
+            roomImg.style.display = "block";
+            emptyPh.style.display = "none";
+          }
         } catch (err) {
           alert("No se pudo guardar: " + err.message);
         }
@@ -2058,9 +2087,39 @@
     if (btnPlay) btnPlay.addEventListener("click", jugar);
     if (btnSleep) btnSleep.addEventListener("click", toggleDormir);
 
+    // Cargar y mostrar la miniatura del dibujo en la pared
+    function actualizarCuadroGaleria() {
+      var drawingImg = document.getElementById("pet-room-drawing-img");
+      var emptyPlaceholder = document.getElementById("gallery-empty-state");
+      var savedDrawing = localStorage.getItem("maca_dibujo_guardado");
+
+      if (savedDrawing && drawingImg && emptyPlaceholder) {
+        drawingImg.src = savedDrawing;
+        drawingImg.style.display = "block";
+        emptyPlaceholder.style.display = "none";
+      } else if (drawingImg && emptyPlaceholder) {
+        drawingImg.style.display = "none";
+        emptyPlaceholder.style.display = "flex";
+      }
+    }
+
+    var galleryFrame = document.getElementById("room-gallery-frame");
+    if (galleryFrame) {
+      galleryFrame.addEventListener("click", function () {
+        cambiarSeccion("dibujo");
+      });
+      galleryFrame.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          cambiarSeccion("dibujo");
+        }
+      });
+    }
+
     // Inicializar
     renderizarMascota();
     actualizarStats();
+    actualizarCuadroGaleria();
   }
 
   /* ══════════════════════════════════════════════════════════════

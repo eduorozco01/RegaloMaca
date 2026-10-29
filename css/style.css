@@ -3009,26 +3009,26 @@ button {
 /* ── Escenario de la Habitación Pixel ── */
 .pet-room-stage {
   width: 100%;
-  height: 340px;
+  height: 380px;
   border: 3px solid var(--borde-oscuro);
   border-radius: 12px;
   position: relative;
   overflow: hidden;
   box-shadow: inset 2px 2px 0 rgba(255,255,255,0.7), var(--pixel-shadow);
-  /* Papel de pared retro a rayas sutiles */
-  background: #dbebf5;
+  /* Papel de pared retro a rayas sutiles estilo Mid-Century */
+  background: #e2edf5;
   background-image: repeating-linear-gradient(
     90deg,
     transparent,
-    transparent 20px,
-    rgba(59, 140, 255, 0.08) 20px,
-    rgba(59, 140, 255, 0.08) 40px
+    transparent 24px,
+    rgba(59, 140, 255, 0.08) 24px,
+    rgba(59, 140, 255, 0.08) 48px
   );
 }
 
 @media (max-width: 600px) {
   .pet-room-stage {
-    height: 280px;
+    height: 310px;
   }
 }
 
@@ -3151,69 +3151,321 @@ button {
 .window-curtain.left { left: 0; border-right: 2px solid var(--borde-oscuro); }
 .window-curtain.right { right: 0; border-left: 2px solid var(--borde-oscuro); }
 
-/* Cuadro en la pared */
-.room-picture-frame {
+/* ── MUEBLES Y DECORACIÓN MID-CENTURY COLORIDA ── */
+
+/* Reloj de pared Sunburst Mid-Century */
+.clock-sunburst {
   position: absolute;
-  top: 30px;
-  right: 50px;
-  background: var(--crema);
-  border: 3px solid var(--borde-oscuro);
-  border-radius: 6px;
-  padding: 6px 10px;
-  box-shadow: 2px 2px 0 var(--borde-oscuro);
-  text-align: center;
-}
-
-.picture-couple-art span {
-  display: block;
-  font-family: var(--font-title);
-  font-size: 11px;
-  font-weight: bold;
-  color: var(--borde-oscuro);
-}
-
-.picture-couple-art small {
-  font-size: 9px;
-  color: var(--rosa);
-  font-weight: bold;
-}
-
-/* Estantería con plantita */
-.room-shelf {
-  position: absolute;
-  top: 100px;
-  right: 40px;
-  width: 90px;
-  height: 6px;
-  background: #a98059;
+  top: 20px;
+  left: 155px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #e9c46a;
   border: 2px solid var(--borde-oscuro);
+  box-shadow: 2px 2px 0 var(--borde-oscuro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+}
+.clock-sunburst::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: #fffdf7;
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 50%;
+}
+.clock-sunburst::after {
+  content: "";
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  border: 2px dashed #b58d3d;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Planta Monstera en macetero trípode */
+.monstera-midcentury {
+  position: absolute;
+  bottom: 85px;
+  left: 155px;
+  width: 44px;
+  height: 72px;
+  z-index: 5;
+}
+.monstera-leaves {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 44px;
+  height: 34px;
+}
+.monstera-pot {
+  position: absolute;
+  bottom: 16px;
+  left: 8px;
+  width: 28px;
+  height: 24px;
+  background: #fffdf7;
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 4px;
+  box-shadow: 1px 1px 0 var(--borde-oscuro);
+}
+.monstera-stand {
+  position: absolute;
+  bottom: 0;
+  left: 6px;
+  right: 6px;
+  height: 18px;
+}
+.monstera-stand::before, .monstera-stand::after {
+  content: "";
+  position: absolute;
+  width: 4px;
+  height: 18px;
+  background: #7a4622;
+  border: 1px solid var(--borde-oscuro);
+}
+.monstera-stand::before { left: 2px; transform: rotate(12deg); }
+.monstera-stand::after { right: 2px; transform: rotate(-12deg); }
+
+/* MARCO DE GALERÍA: MINIATURA DE NUESTROS DIBUJOS */
+.gallery-drawing-frame {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 100px;
+  background: #fffdf7;
+  border: 3px solid #8b5a2b; /* Madera noble de teca */
+  border-radius: 4px;
+  box-shadow: 3px 3px 0 var(--borde-oscuro);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  box-sizing: border-box;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.15s ease;
+}
+.gallery-drawing-frame:hover {
+  transform: translateX(-50%) scale(1.06) translateY(-2px);
+  box-shadow: 4px 4px 0 var(--linea);
+}
+/* Foco de latón de la galería */
+.gallery-drawing-frame::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  width: 34px;
+  height: 5px;
+  background: #e9c46a;
+  border: 1.5px solid var(--borde-oscuro);
+  border-radius: 3px;
+  box-shadow: 1px 1px 0 var(--borde-oscuro);
+}
+
+.gallery-thumb-canvas {
+  width: 100%;
+  height: 100%;
+  background: #fdfaf0;
+  border: 1px dashed #3b8cff;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--borde-oscuro);
+  font-weight: bold;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.gallery-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.pet-room-drawing-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  background: #fffdf7;
+}
+
+/* APARADOR / CREDENZA MID-CENTURY */
+.credenza-midcentury {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 54px;
+  background: #a4683f; /* Madera teca */
+  border: 3px solid var(--borde-oscuro);
+  border-radius: 4px;
+  box-shadow: 3px 3px 0 var(--borde-oscuro);
+  display: flex;
+  padding: 3px;
+  gap: 3px;
+  box-sizing: border-box;
+  z-index: 4;
+}
+.credenza-door {
+  flex: 1;
+  border: 1.5px solid var(--borde-oscuro);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.door-mustard { background: #e9c46a; }
+.door-teal { background: #2a9d8f; }
+.door-handle {
+  width: 4px;
+  height: 14px;
+  background: var(--borde-oscuro);
   border-radius: 2px;
 }
 
-.shelf-plant {
+/* Patas cónicas oblicuas (Tapered legs) */
+.credenza-leg-left, .credenza-leg-right {
   position: absolute;
-  bottom: 6px;
-  right: 12px;
+  bottom: -20px;
+  width: 5px;
+  height: 20px;
+  background: #7a4622;
+  border: 1px solid var(--borde-oscuro);
+}
+.credenza-leg-left { left: 16px; transform: rotate(16deg); }
+.credenza-leg-right { right: 16px; transform: rotate(-16deg); }
+
+/* Mini tocadiscos retro sobre el aparador */
+.credenza-accessory {
+  position: absolute;
+  top: -18px;
+  right: 18px;
+  width: 24px;
+  height: 16px;
+  background: #ff9ebb;
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 1px 1px 0 var(--borde-oscuro);
+}
+.credenza-accessory::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: var(--borde-oscuro);
+  border-radius: 50%;
 }
 
-.plant-pot {
-  width: 16px;
-  height: 12px;
-  background: #df7a4e;
+/* LÁMPARA DE PIE SETA RETRO */
+.lamp-mushroom {
+  position: absolute;
+  bottom: 95px;
+  right: 135px;
+  width: 32px;
+  height: 110px;
+  z-index: 5;
+}
+.lamp-shade {
+  width: 32px;
+  height: 20px;
+  background: #e76f51; /* Naranja nórdico */
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 16px 16px 4px 4px;
+  box-shadow: 2px 2px 0 var(--borde-oscuro);
+  transition: all 0.5s ease;
+}
+.pet-room-stage.modo-noche .lamp-shade {
+  background: #ffbe0b;
+  box-shadow: 0 0 16px rgba(255, 190, 11, 0.9), 2px 2px 0 var(--borde-oscuro);
+}
+.lamp-pole {
+  width: 4px;
+  height: 90px;
+  background: #e9c46a; /* Latón dorado */
   border: 1px solid var(--borde-oscuro);
-  border-radius: 2px 2px 4px 4px;
+  margin: 0 auto;
+}
+.lamp-base {
+  width: 22px;
+  height: 6px;
+  background: var(--borde-oscuro);
+  border-radius: 3px;
+  margin: -2px auto 0 auto;
 }
 
-.plant-leaves {
+/* SILLÓN / BUTACA COCKTAIL MID-CENTURY */
+.chair-midcentury {
   position: absolute;
-  bottom: 11px;
-  left: -2px;
-  width: 20px;
-  height: 14px;
-  background: #06d6a0;
-  border: 1px solid var(--borde-oscuro);
-  border-radius: 10px 10px 0 0;
+  bottom: 80px;
+  right: 36px;
+  width: 76px;
+  height: 88px;
+  z-index: 5;
 }
+.chair-back {
+  width: 72px;
+  height: 54px;
+  background: #e76f51; /* Coral retro */
+  border: 3px solid var(--borde-oscuro);
+  border-radius: 28px 28px 12px 12px;
+  box-shadow: 2px 2px 0 var(--borde-oscuro);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.chair-back::after {
+  content: "•  •";
+  color: var(--borde-oscuro);
+  font-size: 14px;
+}
+.chair-seat {
+  position: absolute;
+  bottom: 22px;
+  left: 3px;
+  width: 66px;
+  height: 22px;
+  background: #f4a261;
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 8px;
+}
+.chair-legs {
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  right: 10px;
+  height: 22px;
+}
+.chair-legs::before, .chair-legs::after {
+  content: "";
+  position: absolute;
+  width: 5px;
+  height: 24px;
+  background: #7a4622;
+  border: 1px solid var(--borde-oscuro);
+}
+.chair-legs::before { left: 4px; transform: rotate(18deg); }
+.chair-legs::after { right: 4px; transform: rotate(-18deg); }
 
 /* Suelo de tarima de madera pixelada */
 .room-floor {
@@ -3221,35 +3473,32 @@ button {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 110px;
+  height: 125px;
   background: #dfc8a7;
   border-top: 3px solid var(--borde-oscuro);
   background-image: 
     linear-gradient(#caa980 1px, transparent 1px),
     linear-gradient(90deg, #caa980 1px, transparent 1px);
-  background-size: 100% 22px, 50px 100%;
+  background-size: 100% 24px, 60px 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Alfombrita en forma de corazón o pastel */
-.floor-carpet {
-  width: 140px;
-  height: 65px;
-  background: #ffe3ec;
-  border: 3px dashed #ff9ebb;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: inset 1px 1px 0 rgba(0,0,0,0.05);
-}
-
-.carpet-heart {
-  font-size: 20px;
-  color: var(--rosa);
-  opacity: 0.7;
+/* Alfombra orgánica Mid-Century (forma de riñón con rombos retro) */
+.carpet-midcentury {
+  width: 220px;
+  height: 80px;
+  background: #ffecd1;
+  border: 3px solid var(--borde-oscuro);
+  border-radius: 50% 40% 50% 45%;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.06);
+  position: relative;
+  background-image: 
+    radial-gradient(#f4a261 16%, transparent 17%), 
+    radial-gradient(#2a9d8f 16%, transparent 17%);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
 }
 
 /* Camita para dormir */

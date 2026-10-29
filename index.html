@@ -689,7 +689,7 @@
                 </button>
               </div>
 
-              <!-- ESCENARIO DE LA HABITACIÓN PIXEL ART -->
+              <!-- ESCENARIO DE LA HABITACIÓN PIXEL ART (ESTILO MID-CENTURY COLORIDO) -->
               <div class="pet-room-stage" id="pet-room-stage">
 
                 <!-- Luz ambiental (modo noche / día) -->
@@ -707,31 +707,66 @@
                   <div class="window-curtain right"></div>
                 </div>
 
-                <!-- Cuadro de Maca & Edu en la pared -->
-                <div class="room-picture-frame" title="Nuestro retrato juntos ♥">
-                  <div class="picture-couple-art">
-                    <span>Maca & Edu</span>
-                    <small>♥ 5 años ♥</small>
+                <!-- Reloj de pared Sunburst Mid-Century (años 50/60) -->
+                <div class="clock-sunburst" title="Reloj Sunburst Mid-Century"></div>
+
+                <!-- Planta Monstera en macetero trípode Mid-Century -->
+                <div class="monstera-midcentury" title="Monstera deliciosa">
+                  <svg class="monstera-leaves" viewBox="0 0 44 34" shape-rendering="crispEdges">
+                    <rect x="14" y="2" width="16" height="14" fill="#2a9d8f"/>
+                    <rect x="8" y="10" width="10" height="12" fill="#2a9d8f"/>
+                    <rect x="26" y="8" width="12" height="14" fill="#2a9d8f"/>
+                    <rect x="18" y="14" width="8" height="18" fill="#1b4332"/>
+                    <rect x="12" y="13" width="3" height="3" fill="#e2edf5"/>
+                    <rect x="29" y="12" width="3" height="4" fill="#e2edf5"/>
+                  </svg>
+                  <div class="monstera-pot"></div>
+                  <div class="monstera-stand"></div>
+                </div>
+
+                <!-- MARCO DE GALERÍA: MINIATURA DE NUESTROS DIBUJOS -->
+                <div class="gallery-drawing-frame" id="room-gallery-frame" role="button" tabindex="0" title="¡Haz clic para ver o ir a nuestro rincón de dibujo!">
+                  <div class="gallery-thumb-canvas" id="gallery-thumb-canvas">
+                    <!-- Si hay dibujo, se inyecta la miniatura en <img>; si no, placeholder -->
+                    <div class="gallery-empty-state" id="gallery-empty-state">
+                      <span style="font-size: 16px; line-height: 1;">🎨</span>
+                      <span style="font-size: 9px; margin-top: 2px;">Tu Dibujo Aquí</span>
+                      <small style="color: var(--linea); font-size: 8px;">(ve a Dibujo)</small>
+                    </div>
+                    <img id="pet-room-drawing-img" class="pet-room-drawing-img" style="display:none;" alt="Miniatura de nuestro dibujo">
                   </div>
                 </div>
 
-                <!-- Estantería con plantita pixel -->
-                <div class="room-shelf">
-                  <div class="shelf-plant">
-                    <div class="plant-leaves"></div>
-                    <div class="plant-pot"></div>
+                <!-- APARADOR / CREDENZA MID-CENTURY CON PUERTAS BICOLOR Y TOCADISCOS -->
+                <div class="credenza-midcentury">
+                  <div class="credenza-door door-mustard">
+                    <div class="door-handle"></div>
                   </div>
-                  <div class="shelf-books">
-                    <span class="book-b1"></span>
-                    <span class="book-b2"></span>
+                  <div class="credenza-door door-teal">
+                    <div class="door-handle"></div>
                   </div>
+                  <div class="credenza-accessory" title="Mini tocadiscos retro"></div>
+                  <div class="credenza-leg-left"></div>
+                  <div class="credenza-leg-right"></div>
                 </div>
 
-                <!-- Suelo de tarima y Alfombrita de corazón -->
+                <!-- LÁMPARA DE PIE SETA RETRO MID-CENTURY -->
+                <div class="lamp-mushroom" title="Lámpara seta nórdica">
+                  <div class="lamp-shade"></div>
+                  <div class="lamp-pole"></div>
+                  <div class="lamp-base"></div>
+                </div>
+
+                <!-- SILLÓN / BUTACA COCKTAIL MID-CENTURY -->
+                <div class="chair-midcentury" title="Butaca Mid-Century">
+                  <div class="chair-back"></div>
+                  <div class="chair-seat"></div>
+                  <div class="chair-legs"></div>
+                </div>
+
+                <!-- Suelo de tarima y Alfombrita Mid-Century -->
                 <div class="room-floor">
-                  <div class="floor-carpet">
-                    <span class="carpet-heart">♥</span>
-                  </div>
+                  <div class="carpet-midcentury"></div>
                 </div>
 
                 <!-- Camita para dormir -->
