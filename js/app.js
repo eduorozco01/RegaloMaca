@@ -1733,6 +1733,47 @@
   }
 
   /* ══════════════════════════════════════════════════════════════
+   *  URRACA COMÚN EN PIXEL ART (VUELA AL HACER CLIC)
+   * ══════════════════════════════════════════════════════════════ */
+  function initUrraca() {
+    var urraca = document.getElementById("urraca-interactiva");
+    var chirp = document.getElementById("urraca-chirp");
+    if (!urraca) return;
+
+    function hacerVolar() {
+      if (urraca.classList.contains("volando") || urraca.classList.contains("aterrizando")) return;
+
+      // Sonido 8-bit de gorjeo / aleteo
+      playChiptuneTone(1760, 0.08, "square", 0.14);
+      setTimeout(function () {
+        playChiptuneTone(2349, 0.1, "square", 0.16);
+      }, 90);
+
+      if (chirp) chirp.textContent = "¡adiós! ✧";
+      urraca.classList.add("volando");
+
+      // Regresa volando después de unos segundos para poder hacer clic otra vez
+      setTimeout(function () {
+        urraca.classList.remove("volando");
+        urraca.classList.add("aterrizando");
+
+        setTimeout(function () {
+          urraca.classList.remove("aterrizando");
+          if (chirp) chirp.textContent = "¡chirp! ♥";
+        }, 2200);
+      }, 7500);
+    }
+
+    urraca.addEventListener("click", hacerVolar);
+    urraca.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        hacerVolar();
+      }
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════════════
    *  INICIALIZACIÓN GENERAL
    * ══════════════════════════════════════════════════════════════ */
   function init() {
@@ -1745,6 +1786,7 @@
     initDibujo();
     initReproductor();
     initPlaylistSection();
+    initUrraca();
   }
 
   if (document.readyState === "loading") {
