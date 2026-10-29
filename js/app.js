@@ -1774,6 +1774,296 @@
   }
 
   /* ══════════════════════════════════════════════════════════════
+   *  SECCIÓN HABITACIÓN DE LA MASCOTA (2 PERROS Y 2 GATOS)
+   * ══════════════════════════════════════════════════════════════ */
+  function initMascotaSection() {
+    var petStage = document.getElementById("pet-room-stage");
+    var petActor = document.getElementById("pet-actor");
+    var svgContainer = document.getElementById("pet-active-svg-container");
+    var dialogBox = document.getElementById("pet-dialog-msg");
+    var nameInput = document.getElementById("pet-name-input");
+    var btnSaveName = document.getElementById("btn-save-pet-name");
+    var speechBubble = document.getElementById("pet-fx-speech");
+    var fxHearts = document.getElementById("pet-fx-hearts");
+    var fxSleep = document.getElementById("pet-fx-sleep");
+    var foodFill = document.getElementById("dish-food-fill");
+    var toyBall = document.getElementById("room-toy-ball");
+    var btnPet = document.getElementById("btn-pet-pet");
+    var btnFeed = document.getElementById("btn-pet-feed");
+    var btnPlay = document.getElementById("btn-pet-play");
+    var btnSleep = document.getElementById("btn-pet-sleep");
+    var labelSleep = document.getElementById("label-sleep-action");
+    var selectorCards = document.querySelectorAll(".pet-select-card");
+
+    if (!petStage || !petActor || !svgContainer) return;
+
+    var petData = {
+      "gato-naranja": {
+        id: "gato-naranja",
+        defaultName: "Mandarina",
+        tipo: "Gatito Naranja",
+        speech: "¡Miau! ♥",
+        eatText: "Mandarina se relame los bigotitos feliz tras comer su pescadito.",
+        petText: "¡Ronroneo suave! A Mandarina le encanta que le rasques detrás de las orejitas.",
+        playText: "¡Mandarina persigue la pelotita dando zarpazos juguetones!",
+        sleepText: "Mandarina se hace un ovillito suave para dormir.",
+        svg: '<svg viewBox="0 0 40 40" width="84" height="84" shape-rendering="crispEdges"><rect x="10" y="6" width="6" height="6" fill="#f48422"/><rect x="12" y="8" width="3" height="3" fill="#ffb4bc"/><rect x="24" y="6" width="6" height="6" fill="#f48422"/><rect x="25" y="8" width="3" height="3" fill="#ffb4bc"/><rect x="10" y="10" width="20" height="15" fill="#f48422"/><rect x="18" y="9" width="4" height="4" fill="#c95f0c"/><rect x="11" y="14" width="3" height="2" fill="#c95f0c"/><rect x="26" y="14" width="3" height="2" fill="#c95f0c"/><rect x="13" y="14" width="4" height="4" fill="#06d6a0"/><rect x="14" y="15" width="2" height="3" fill="#1d2b4a"/><rect x="23" y="14" width="4" height="4" fill="#06d6a0"/><rect x="24" y="15" width="2" height="3" fill="#1d2b4a"/><rect x="17" y="18" width="6" height="5" fill="#ffffff"/><rect x="19" y="18" width="2" height="2" fill="#ff9ebb"/><rect x="7" y="18" width="3" height="1" fill="#1d2b4a"/><rect x="6" y="20" width="4" height="1" fill="#1d2b4a"/><rect x="30" y="18" width="3" height="1" fill="#1d2b4a"/><rect x="30" y="20" width="4" height="1" fill="#1d2b4a"/><rect x="12" y="24" width="16" height="12" fill="#f48422"/><rect x="16" y="25" width="8" height="9" fill="#ffffff"/><rect x="13" y="34" width="4" height="4" fill="#ffffff"/><rect x="23" y="34" width="4" height="4" fill="#ffffff"/><rect x="27" y="26" width="8" height="3" fill="#f48422"/><rect x="33" y="23" width="4" height="5" fill="#f48422"/><rect x="35" y="20" width="3" height="4" fill="#ffffff"/></svg>'
+      },
+      "gato-negro": {
+        id: "gato-negro",
+        defaultName: "Salem",
+        tipo: "Gato Negro",
+        speech: "¡Prrr! ♥",
+        eatText: "Salem devora su comidita gourmet con mucha elegancia.",
+        petText: "¡Salem cierra los ojos y amasa con sus patitas de felicidad!",
+        playText: "¡Salem acecha la pelotita en silencio y salta sobre ella!",
+        sleepText: "Salem se tumba en su camita como una sombrita tranquila.",
+        svg: '<svg viewBox="0 0 40 40" width="84" height="84" shape-rendering="crispEdges"><rect x="10" y="6" width="6" height="6" fill="#1d2b4a"/><rect x="12" y="8" width="3" height="3" fill="#ff9ebb"/><rect x="24" y="6" width="6" height="6" fill="#1d2b4a"/><rect x="25" y="8" width="3" height="3" fill="#ff9ebb"/><rect x="10" y="10" width="20" height="15" fill="#1d2b4a"/><rect x="13" y="14" width="4" height="4" fill="#ffd166"/><rect x="15" y="14" width="2" height="4" fill="#1d2b4a"/><rect x="23" y="14" width="4" height="4" fill="#ffd166"/><rect x="25" y="14" width="2" height="4" fill="#1d2b4a"/><rect x="19" y="19" width="2" height="2" fill="#ff9ebb"/><rect x="7" y="18" width="3" height="1" fill="#ffffff"/><rect x="6" y="20" width="4" height="1" fill="#ffffff"/><rect x="30" y="18" width="3" height="1" fill="#ffffff"/><rect x="30" y="20" width="4" height="1" fill="#ffffff"/><rect x="13" y="24" width="14" height="2" fill="#ff4b72"/><rect x="19" y="25" width="2" height="2" fill="#ffd166"/><rect x="12" y="26" width="16" height="10" fill="#1d2b4a"/><rect x="13" y="34" width="4" height="4" fill="#1d2b4a"/><rect x="14" y="36" width="2" height="2" fill="#fffdf7"/><rect x="23" y="34" width="4" height="4" fill="#1d2b4a"/><rect x="24" y="36" width="2" height="2" fill="#fffdf7"/><rect x="27" y="28" width="8" height="3" fill="#1d2b4a"/><rect x="33" y="23" width="3" height="6" fill="#1d2b4a"/><rect x="31" y="20" width="3" height="4" fill="#1d2b4a"/></svg>'
+      },
+      "perro-shiba": {
+        id: "perro-shiba",
+        defaultName: "Duncan",
+        tipo: "Shiba Inu",
+        speech: "¡Guau! ♥",
+        eatText: "¡Duncan mueve la cola como loco mientras devora su huesito!",
+        petText: "¡Duncan sonríe de oreja a oreja y te da un lametón cariñoso!",
+        playText: "¡Duncan corretea tras la pelota dando botes de pura alegría!",
+        sleepText: "Duncan apoya el hocico entre sus patitas y bosteza.",
+        svg: '<svg viewBox="0 0 40 40" width="84" height="84" shape-rendering="crispEdges"><rect x="9" y="5" width="6" height="7" fill="#df8b3e"/><rect x="11" y="7" width="3" height="4" fill="#fffdf7"/><rect x="25" y="5" width="6" height="7" fill="#df8b3e"/><rect x="26" y="7" width="3" height="4" fill="#fffdf7"/><rect x="10" y="10" width="20" height="14" fill="#df8b3e"/><rect x="14" y="12" width="2" height="2" fill="#ffffff"/><rect x="24" y="12" width="2" height="2" fill="#ffffff"/><rect x="13" y="14" width="4" height="4" fill="#1d2b4a"/><rect x="14" y="14" width="1" height="1" fill="#ffffff"/><rect x="23" y="14" width="4" height="4" fill="#1d2b4a"/><rect x="24" y="14" width="1" height="1" fill="#ffffff"/><rect x="10" y="18" width="20" height="6" fill="#ffffff"/><rect x="18" y="17" width="4" height="3" fill="#1d2b4a"/><rect x="19" y="21" width="3" height="3" fill="#ff708d"/><rect x="12" y="24" width="16" height="3" fill="#3b8cff"/><rect x="18" y="27" width="4" height="3" fill="#3b8cff"/><rect x="12" y="26" width="16" height="10" fill="#df8b3e"/><rect x="16" y="27" width="8" height="7" fill="#ffffff"/><rect x="13" y="34" width="4" height="4" fill="#ffffff"/><rect x="23" y="34" width="4" height="4" fill="#ffffff"/><rect x="27" y="25" width="6" height="5" fill="#df8b3e"/><rect x="30" y="22" width="5" height="5" fill="#ffffff"/></svg>'
+      },
+      "perro-manchado": {
+        id: "perro-manchado",
+        defaultName: "Makowski",
+        tipo: "Terrier Manchado",
+        speech: "¡Arf! ♥",
+        eatText: "¡Makowski come felizmente hasta la última miga de su plato!",
+        petText: "¡Makowski se tumba panza arriba para que le hagas cosquillas!",
+        playText: "¡Makowski atrapa la pelotita y te la trae orgulloso para que se la tires otra vez!",
+        sleepText: "Makowski se acurruca plácidamente con su mantita suave.",
+        svg: '<svg viewBox="0 0 40 40" width="84" height="84" shape-rendering="crispEdges"><rect x="7" y="10" width="5" height="10" fill="#1d2b4a"/><rect x="28" y="10" width="5" height="10" fill="#ffffff"/><rect x="28" y="10" width="5" height="2" fill="#d2e3ed"/><rect x="10" y="9" width="20" height="15" fill="#ffffff"/><rect x="11" y="12" width="7" height="8" fill="#1d2b4a"/><rect x="13" y="14" width="3" height="4" fill="#ffffff"/><rect x="14" y="15" width="2" height="3" fill="#1d2b4a"/><rect x="24" y="14" width="3" height="4" fill="#1d2b4a"/><rect x="25" y="14" width="1" height="1" fill="#ffffff"/><rect x="18" y="18" width="4" height="3" fill="#1d2b4a"/><rect x="19" y="22" width="2" height="2" fill="#ff9ebb"/><rect x="12" y="24" width="16" height="2" fill="#ff9ebb"/><rect x="18" y="26" width="4" height="2" fill="#ffd166"/><rect x="12" y="26" width="16" height="10" fill="#ffffff"/><rect x="14" y="28" width="5" height="4" fill="#1d2b4a"/><rect x="22" y="27" width="4" height="5" fill="#1d2b4a"/><rect x="13" y="34" width="4" height="4" fill="#ffffff"/><rect x="13" y="37" width="4" height="1" fill="#1d2b4a"/><rect x="23" y="34" width="4" height="4" fill="#ffffff"/><rect x="23" y="37" width="4" height="1" fill="#1d2b4a"/><rect x="27" y="27" width="7" height="3" fill="#ffffff"/><rect x="32" y="24" width="3" height="4" fill="#1d2b4a"/></svg>'
+      }
+    };
+
+    var petEstado = {
+      tipoActivo: localStorage.getItem("regaloMaca_petType") || "perro-shiba",
+      nombre: localStorage.getItem("regaloMaca_petName") || "Duncan",
+      durmiendo: false,
+      felicidad: 5,
+      hambre: 4,
+      energia: 5
+    };
+
+    function renderizarMascota() {
+      var data = petData[petEstado.tipoActivo] || petData["perro-shiba"];
+      svgContainer.innerHTML = data.svg;
+      nameInput.value = petEstado.nombre;
+
+      selectorCards.forEach(function (card) {
+        if (card.getAttribute("data-pet") === petEstado.tipoActivo) {
+          card.classList.add("activo");
+        } else {
+          card.classList.remove("activo");
+        }
+      });
+    }
+
+    function mostrarMensaje(txt) {
+      if (dialogBox) dialogBox.textContent = txt;
+    }
+
+    function mostrarSpeech(txt) {
+      if (speechBubble) {
+        speechBubble.textContent = txt;
+        speechBubble.classList.add("visible");
+        setTimeout(function () {
+          speechBubble.classList.remove("visible");
+        }, 1600);
+      }
+    }
+
+    function actualizarStats() {
+      function renderH(id, count) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var html = "";
+        for (var i = 1; i <= 5; i++) {
+          html += '<span class="stat-h ' + (i <= count ? "full" : "empty") + '">' + (i <= count ? "♥" : "♡") + '</span>';
+        }
+        el.innerHTML = html;
+      }
+      renderH("stat-bar-happiness", petEstado.felicidad);
+      renderH("stat-bar-hunger", petEstado.hambre);
+      renderH("stat-bar-energy", petEstado.energia);
+    }
+
+    function seleccionarMascota(tipo) {
+      if (!petData[tipo]) return;
+      petEstado.tipoActivo = tipo;
+      var data = petData[tipo];
+      petEstado.nombre = data.defaultName;
+      localStorage.setItem("regaloMaca_petType", tipo);
+      localStorage.setItem("regaloMaca_petName", petEstado.nombre);
+      
+      despertarSiDuerme();
+      renderizarMascota();
+      mostrarSpeech(data.speech);
+      mostrarMensaje("¡Has elegido a " + petEstado.nombre + " (" + data.tipo + ")! Le hace mucha ilusión estar aquí ♥");
+      
+      playChiptuneTone(523.25, 0.15, "square", 0.15);
+      setTimeout(function () { playChiptuneTone(659.25, 0.2, "square", 0.18); }, 120);
+    }
+
+    function despertarSiDuerme() {
+      if (petEstado.durmiendo) {
+        petEstado.durmiendo = false;
+        petStage.classList.remove("modo-noche");
+        petActor.classList.remove("en-camita");
+        fxSleep.classList.remove("visible");
+        if (labelSleep) labelSleep.textContent = "Dormir 💤";
+      }
+    }
+
+    // ACCIÓN: Acariciar
+    function acariciar() {
+      despertarSiDuerme();
+      var data = petData[petEstado.tipoActivo];
+      petActor.classList.remove("anim-pet");
+      void petActor.offsetWidth;
+      petActor.classList.add("anim-pet");
+
+      fxHearts.classList.add("visible");
+      mostrarSpeech(data.speech);
+      mostrarMensaje(data.petText);
+
+      petEstado.felicidad = 5;
+      actualizarStats();
+
+      playChiptuneTone(659.25, 0.1, "sine", 0.18);
+      setTimeout(function () { playChiptuneTone(783.99, 0.15, "sine", 0.2); }, 90);
+      setTimeout(function () { playChiptuneTone(1046.50, 0.25, "sine", 0.22); }, 180);
+
+      setTimeout(function () {
+        fxHearts.classList.remove("visible");
+      }, 1200);
+    }
+
+    // ACCIÓN: Alimentar
+    function alimentar() {
+      despertarSiDuerme();
+      var data = petData[petEstado.tipoActivo];
+      if (foodFill) foodFill.classList.remove("vacio");
+
+      petActor.classList.remove("jugando");
+      petActor.classList.add("en-cuenco");
+      mostrarSpeech("¡ñam! ♥");
+      mostrarMensaje(data.eatText);
+
+      petEstado.hambre = 5;
+      petEstado.felicidad = 5;
+      actualizarStats();
+
+      playChiptuneTone(440, 0.08, "triangle", 0.18);
+      setTimeout(function () { playChiptuneTone(493.88, 0.08, "triangle", 0.18); }, 120);
+      setTimeout(function () { playChiptuneTone(587.33, 0.12, "triangle", 0.2); }, 240);
+
+      setTimeout(function () {
+        petActor.classList.remove("en-cuenco");
+      }, 2000);
+    }
+
+    // ACCIÓN: Jugar
+    function jugar() {
+      despertarSiDuerme();
+      var data = petData[petEstado.tipoActivo];
+      if (toyBall) {
+        toyBall.classList.add("botando");
+      }
+      petActor.classList.add("jugando");
+      mostrarSpeech("¡yupi! ⚽");
+      mostrarMensaje(data.playText);
+
+      petEstado.felicidad = 5;
+      petEstado.energia = Math.max(1, petEstado.energia - 1);
+      actualizarStats();
+
+      playChiptuneTone(392, 0.08, "square", 0.15);
+      setTimeout(function () { playChiptuneTone(523.25, 0.08, "square", 0.18); }, 80);
+      setTimeout(function () { playChiptuneTone(659.25, 0.08, "square", 0.18); }, 160);
+      setTimeout(function () { playChiptuneTone(783.99, 0.15, "square", 0.2); }, 240);
+
+      setTimeout(function () {
+        if (toyBall) toyBall.classList.remove("botando");
+        petActor.classList.remove("jugando");
+      }, 2600);
+    }
+
+    // ACCIÓN: Dormir / Despertar
+    function toggleDormir() {
+      var data = petData[petEstado.tipoActivo];
+      petEstado.durmiendo = !petEstado.durmiendo;
+
+      if (petEstado.durmiendo) {
+        petStage.classList.add("modo-noche");
+        petActor.classList.remove("jugando", "en-cuenco");
+        petActor.classList.add("en-camita");
+        fxSleep.classList.add("visible");
+        if (labelSleep) labelSleep.textContent = "Despertar ☀️";
+        mostrarMensaje(data.sleepText + " La habitación está a oscuras. Shhh... que duerma bien ♥");
+
+        petEstado.energia = 5;
+        actualizarStats();
+
+        playChiptuneTone(392, 0.2, "sine", 0.15);
+        setTimeout(function () { playChiptuneTone(329.63, 0.35, "sine", 0.12); }, 180);
+      } else {
+        despertarSiDuerme();
+        mostrarSpeech(data.speech);
+        mostrarMensaje("¡" + petEstado.nombre + " se ha despertado con mucha energía y con ganas de verte! ☀️");
+        playChiptuneTone(523.25, 0.1, "triangle", 0.18);
+        setTimeout(function () { playChiptuneTone(659.25, 0.18, "triangle", 0.2); }, 100);
+      }
+    }
+
+    // EVENTOS
+    selectorCards.forEach(function (card) {
+      card.addEventListener("click", function () {
+        var tipo = card.getAttribute("data-pet");
+        seleccionarMascota(tipo);
+      });
+    });
+
+    if (btnSaveName) {
+      btnSaveName.addEventListener("click", function () {
+        var nuevoNombre = (nameInput.value || "").trim();
+        if (nuevoNombre) {
+          petEstado.nombre = nuevoNombre;
+          localStorage.setItem("regaloMaca_petName", nuevoNombre);
+          mostrarMensaje("✓ Nombre guardado: ahora se llama " + nuevoNombre + " ♥");
+          playChiptuneTone(587.33, 0.1, "square", 0.15);
+        }
+      });
+    }
+
+    if (nameInput) {
+      nameInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          btnSaveName.click();
+        }
+      });
+    }
+
+    if (btnPet) btnPet.addEventListener("click", acariciar);
+    petActor.addEventListener("click", acariciar);
+    if (btnFeed) btnFeed.addEventListener("click", alimentar);
+    if (btnPlay) btnPlay.addEventListener("click", jugar);
+    if (btnSleep) btnSleep.addEventListener("click", toggleDormir);
+
+    // Inicializar
+    renderizarMascota();
+    actualizarStats();
+  }
+
+  /* ══════════════════════════════════════════════════════════════
    *  INICIALIZACIÓN GENERAL
    * ══════════════════════════════════════════════════════════════ */
   function init() {
@@ -1787,6 +2077,7 @@
     initReproductor();
     initPlaylistSection();
     initUrraca();
+    initMascotaSection();
   }
 
   if (document.readyState === "loading") {

@@ -603,13 +603,246 @@
             </div>
           </section>
 
+          <!-- ═══════ SECCIÓN HABITACIÓN DE LA MASCOTA ═══════ -->
           <section id="seccion-mascota" class="seccion">
-            <div class="en-construccion-box">
-              <svg class="en-construccion-icon" viewBox="0 0 16 16">
-                <path d="M3 3h2v3H3V3zm8 0h2v3h-2V3zM2 7h12v6H2V7zm3 2h2v2H5V9zm4 0h2v2H9V9z"/>
-              </svg>
-              <h3 style="font-family: var(--font-title); font-size: 24px;">Habitación de la mascota ♥</h3>
-              <p style="color: var(--linea);">Podrás vestirla, darle de comer y jugar a minijuegos pixel.</p>
+            <div class="box-panel">
+              <div class="box-tab">
+                <svg class="pixel-icon" style="fill: var(--linea);" viewBox="0 0 16 16">
+                  <path d="M3 3h2v3H3V3zm8 0h2v3h-2V3zM2 7h12v6H2V7zm3 2h2v2H5V9zm4 0h2v2H9V9z"/>
+                </svg>
+                <span>cuarto de mascota ✧</span>
+              </div>
+
+              <div style="margin-bottom: 14px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                <div>
+                  <h2 style="font-family: var(--font-title); font-size: 26px; color: var(--borde-oscuro);">La Habitación de Nuestra Mascota</h2>
+                  <p style="font-size: 14px; color: var(--linea);">Elige entre 2 gatitos y 2 perritos, dale de comer, juega con ella o arrópala para dormir ♥</p>
+                </div>
+                
+                <div class="pet-name-editor-pill">
+                  <span style="font-size: 12px; font-weight: bold; color: var(--borde-oscuro);">Nombre:</span>
+                  <input type="text" id="pet-name-input" maxlength="15" value="Duncan" class="pet-name-field" title="Edita el nombre de tu mascota">
+                  <button id="btn-save-pet-name" class="btn-tool-pill" type="button" title="Guardar nombre" style="padding: 4px 8px; font-size: 11px;">
+                    <span>✓</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- SELECTOR DE MASCOTAS (2 PERROS Y 2 GATOS) -->
+              <div class="pet-selector-bar" role="tablist" aria-label="Elegir mascota">
+                <button class="pet-select-card" data-pet="gato-naranja" type="button">
+                  <div class="pet-mini-avatar avatar-cat-orange">
+                    <svg viewBox="0 0 40 40" width="34" height="34" shape-rendering="crispEdges">
+                      <rect x="10" y="6" width="6" height="6" fill="#f48422"/><rect x="24" y="6" width="6" height="6" fill="#f48422"/>
+                      <rect x="10" y="10" width="20" height="14" fill="#f48422"/><rect x="13" y="14" width="4" height="4" fill="#06d6a0"/>
+                      <rect x="23" y="14" width="4" height="4" fill="#06d6a0"/><rect x="17" y="18" width="6" height="4" fill="#ffffff"/>
+                    </svg>
+                  </div>
+                  <div class="pet-card-info">
+                    <span class="pet-card-title">Mandarina</span>
+                    <span class="pet-card-type">Gatito Naranja</span>
+                  </div>
+                </button>
+
+                <button class="pet-select-card" data-pet="gato-negro" type="button">
+                  <div class="pet-mini-avatar avatar-cat-black">
+                    <svg viewBox="0 0 40 40" width="34" height="34" shape-rendering="crispEdges">
+                      <rect x="10" y="6" width="6" height="6" fill="#1d2b4a"/><rect x="24" y="6" width="6" height="6" fill="#1d2b4a"/>
+                      <rect x="10" y="10" width="20" height="14" fill="#1d2b4a"/><rect x="13" y="14" width="4" height="4" fill="#ffd166"/>
+                      <rect x="23" y="14" width="4" height="4" fill="#ffd166"/><rect x="19" y="19" width="2" height="2" fill="#ff9ebb"/>
+                    </svg>
+                  </div>
+                  <div class="pet-card-info">
+                    <span class="pet-card-title">Salem</span>
+                    <span class="pet-card-type">Gato Negro</span>
+                  </div>
+                </button>
+
+                <button class="pet-select-card activo" data-pet="perro-shiba" type="button">
+                  <div class="pet-mini-avatar avatar-dog-shiba">
+                    <svg viewBox="0 0 40 40" width="34" height="34" shape-rendering="crispEdges">
+                      <rect x="9" y="5" width="6" height="7" fill="#df8b3e"/><rect x="25" y="5" width="6" height="7" fill="#df8b3e"/>
+                      <rect x="10" y="10" width="20" height="14" fill="#df8b3e"/><rect x="13" y="14" width="4" height="4" fill="#1d2b4a"/>
+                      <rect x="23" y="14" width="4" height="4" fill="#1d2b4a"/><rect x="10" y="18" width="20" height="6" fill="#ffffff"/>
+                      <rect x="19" y="21" width="3" height="3" fill="#ff708d"/>
+                    </svg>
+                  </div>
+                  <div class="pet-card-info">
+                    <span class="pet-card-title">Duncan</span>
+                    <span class="pet-card-type">Shiba Inu</span>
+                  </div>
+                </button>
+
+                <button class="pet-select-card" data-pet="perro-manchado" type="button">
+                  <div class="pet-mini-avatar avatar-dog-spotted">
+                    <svg viewBox="0 0 40 40" width="34" height="34" shape-rendering="crispEdges">
+                      <rect x="7" y="10" width="5" height="10" fill="#1d2b4a"/><rect x="28" y="10" width="5" height="10" fill="#ffffff"/>
+                      <rect x="10" y="9" width="20" height="15" fill="#ffffff"/><rect x="11" y="12" width="7" height="8" fill="#1d2b4a"/>
+                      <rect x="13" y="14" width="3" height="4" fill="#ffffff"/><rect x="24" y="14" width="3" height="4" fill="#1d2b4a"/>
+                      <rect x="18" y="18" width="4" height="3" fill="#1d2b4a"/>
+                    </svg>
+                  </div>
+                  <div class="pet-card-info">
+                    <span class="pet-card-title">Makowski</span>
+                    <span class="pet-card-type">Terrier Manchado</span>
+                  </div>
+                </button>
+              </div>
+
+              <!-- ESCENARIO DE LA HABITACIÓN PIXEL ART -->
+              <div class="pet-room-stage" id="pet-room-stage">
+
+                <!-- Luz ambiental (modo noche / día) -->
+                <div class="room-ambient-overlay" id="room-ambient-overlay"></div>
+
+                <!-- Ventana pixelada al exterior con cielo y sol/luna -->
+                <div class="room-window">
+                  <div class="window-sky" id="window-sky">
+                    <div class="sky-celestial" id="sky-celestial"></div>
+                    <div class="sky-cloud cloud-1"></div>
+                    <div class="sky-cloud cloud-2"></div>
+                  </div>
+                  <div class="window-frame-bars"></div>
+                  <div class="window-curtain left"></div>
+                  <div class="window-curtain right"></div>
+                </div>
+
+                <!-- Cuadro de Maca & Edu en la pared -->
+                <div class="room-picture-frame" title="Nuestro retrato juntos ♥">
+                  <div class="picture-couple-art">
+                    <span>Maca & Edu</span>
+                    <small>♥ 5 años ♥</small>
+                  </div>
+                </div>
+
+                <!-- Estantería con plantita pixel -->
+                <div class="room-shelf">
+                  <div class="shelf-plant">
+                    <div class="plant-leaves"></div>
+                    <div class="plant-pot"></div>
+                  </div>
+                  <div class="shelf-books">
+                    <span class="book-b1"></span>
+                    <span class="book-b2"></span>
+                  </div>
+                </div>
+
+                <!-- Suelo de tarima y Alfombrita de corazón -->
+                <div class="room-floor">
+                  <div class="floor-carpet">
+                    <span class="carpet-heart">♥</span>
+                  </div>
+                </div>
+
+                <!-- Camita para dormir -->
+                <div class="room-pet-bed" id="room-pet-bed" title="Camita de dormir">
+                  <div class="bed-cushion"></div>
+                  <div class="bed-blanket" id="bed-blanket"></div>
+                </div>
+
+                <!-- Cuenco de comida y agua -->
+                <div class="room-food-bowl" id="room-food-bowl" title="Cuenco de comida">
+                  <div class="bowl-dish water-dish">
+                    <div class="dish-water-fill"></div>
+                  </div>
+                  <div class="bowl-dish food-dish">
+                    <div class="dish-food-fill" id="dish-food-fill"></div>
+                  </div>
+                </div>
+
+                <!-- Pelotita de juguete que bota -->
+                <div class="room-toy-ball" id="room-toy-ball"></div>
+
+                <!-- Contenedor flotante de la mascota activa en la habitación -->
+                <div class="pet-actor-wrapper" id="pet-actor">
+                  <!-- Efectos flotantes (corazones, Zzz, bocadillo) -->
+                  <div class="pet-fx-speech" id="pet-fx-speech">¡Guau! ♥</div>
+                  <div class="pet-fx-hearts" id="pet-fx-hearts">
+                    <span class="fx-heart h1">♥</span>
+                    <span class="fx-heart h2">♥</span>
+                    <span class="fx-heart h3">♥</span>
+                  </div>
+                  <div class="pet-fx-sleep" id="pet-fx-sleep">
+                    <span class="fx-z z1">Z</span>
+                    <span class="fx-z z2">z</span>
+                    <span class="fx-z z3">z</span>
+                  </div>
+
+                  <!-- SVG DE LA MASCOTA RENDERIZADA DINÁMICAMENTE -->
+                  <div class="pet-active-svg-container" id="pet-active-svg-container">
+                    <!-- Inyectado por JS según la mascota elegida -->
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- PANEL DE CUIDADOS & STATS -->
+              <div class="pet-dashboard-grid">
+
+                <!-- Botonera de acciones -->
+                <div class="pet-actions-toolbar">
+                  <button class="btn-pet-action btn-pet-pet" id="btn-pet-pet" type="button" title="Acariciar y dar mimos">
+                    <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M8 14s-6-3.8-6-8a4 4 0 017-2.6A4 4 0 0114 6c0 4.2-6 8-6 8z"/></svg>
+                    <span>Acariciar ♥</span>
+                  </button>
+
+                  <button class="btn-pet-action btn-pet-feed" id="btn-pet-feed" type="button" title="Dar comida rica">
+                    <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M2 3h12v2H2V3zm1 3h10v7H3V6zm2 2v3h6V8H5z"/></svg>
+                    <span id="label-feed-action">Dar comida</span>
+                  </button>
+
+                  <button class="btn-pet-action btn-pet-play" id="btn-pet-play" type="button" title="Lanzar la pelotita para jugar">
+                    <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 3a4 4 0 110 8 4 4 0 010-8z"/></svg>
+                    <span>Jugar ⚽</span>
+                  </button>
+
+                  <button class="btn-pet-action btn-pet-sleep" id="btn-pet-sleep" type="button" title="Dormir o despertar">
+                    <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M6 2a6 6 0 106 6A6 6 0 016 2z"/></svg>
+                    <span id="label-sleep-action">Dormir 💤</span>
+                  </button>
+                </div>
+
+                <!-- Medidores Tamagotchi Stats -->
+                <div class="pet-stats-card">
+                  <div class="pet-stat-row">
+                    <span class="stat-label">Felicidad:</span>
+                    <div class="stat-hearts-bar" id="stat-bar-happiness">
+                      <span class="stat-h full">♥</span>
+                      <span class="stat-h full">♥</span>
+                      <span class="stat-h full">♥</span>
+                      <span class="stat-h full">♥</span>
+                      <span class="stat-h full">♥</span>
+                    </div>
+                  </div>
+                  <div class="pet-stat-row">
+                    <span class="stat-label">Hambre:</span>
+                    <div class="stat-hearts-bar" id="stat-bar-hunger">
+                      <span class="stat-h full">♥</span>
+                      <span class="stat-h full">♥</span>
+                      <span class="stat-h full">♥</span>
+                      <span class="stat-h full">♥</span>
+                      <span class="stat-h empty">♡</span>
+                    </div>
+                  </div>
+                  <div class="pet-stat-row">
+                    <span class="stat-label">Energía:</span>
+                    <div class="stat-hearts-bar" id="stat-bar-energy">
+                      <span class="stat-h full">♥</span>
+                      <span class="stat-h full">♥</span>
+                      <span class="stat-h full">♥</span>
+                      <span class="stat-h full">♥</span>
+                      <span class="stat-h full">♥</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Cuadro de texto / feedback de la mascota -->
+              <div class="pet-dialog-log-box" id="pet-dialog-msg">
+                ¡Duncan está muy contento de verte en su habitación! Dale mimos o juega con él ♥
+              </div>
+
             </div>
           </section>
 

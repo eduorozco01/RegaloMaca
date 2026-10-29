@@ -2905,3 +2905,688 @@ button {
     opacity: 1;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+ *  SECCIÓN HABITACIÓN DE LA MASCOTA PIXEL ART
+ * ═══════════════════════════════════════════════════════════════ */
+.pet-name-editor-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--crema);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: var(--radius-pill);
+  padding: 4px 10px;
+  box-shadow: 2px 2px 0 var(--borde-oscuro);
+}
+
+.pet-name-field {
+  border: 1px solid var(--linea);
+  background: #fff;
+  border-radius: 4px;
+  font-family: var(--font-title);
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--borde-oscuro);
+  padding: 2px 6px;
+  width: 90px;
+  outline: none;
+}
+
+/* ── Selector de las 4 Mascotas ── */
+.pet-selector-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .pet-selector-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.pet-select-card {
+  background: var(--crema);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 10px;
+  box-shadow: 3px 3px 0 var(--panel);
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.pet-select-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0 var(--linea);
+  background: #fdfdf9;
+}
+
+.pet-select-card.activo {
+  background: #e6f2ff;
+  border-color: var(--linea);
+  box-shadow: 3px 3px 0 var(--linea);
+}
+
+.pet-mini-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  border: 1px solid var(--borde-oscuro);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+}
+
+.pet-card-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pet-card-title {
+  font-family: var(--font-title);
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--borde-oscuro);
+  white-space: nowrap;
+}
+
+.pet-card-type {
+  font-size: 11px;
+  color: var(--linea);
+  white-space: nowrap;
+}
+
+/* ── Escenario de la Habitación Pixel ── */
+.pet-room-stage {
+  width: 100%;
+  height: 340px;
+  border: 3px solid var(--borde-oscuro);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 2px 2px 0 rgba(255,255,255,0.7), var(--pixel-shadow);
+  /* Papel de pared retro a rayas sutiles */
+  background: #dbebf5;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 20px,
+    rgba(59, 140, 255, 0.08) 20px,
+    rgba(59, 140, 255, 0.08) 40px
+  );
+}
+
+@media (max-width: 600px) {
+  .pet-room-stage {
+    height: 280px;
+  }
+}
+
+/* Capa de luz nocturna */
+.room-ambient-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(22, 33, 62, 0.75);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  z-index: 25;
+}
+
+.pet-room-stage.modo-noche .room-ambient-overlay {
+  opacity: 1;
+}
+
+/* Ventana al exterior */
+.room-window {
+  position: absolute;
+  top: 24px;
+  left: 36px;
+  width: 90px;
+  height: 90px;
+  background: #fff;
+  border: 3px solid var(--borde-oscuro);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0 var(--borde-oscuro);
+  overflow: hidden;
+}
+
+.window-sky {
+  width: 100%;
+  height: 100%;
+  background: #99d2f2;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.6s ease;
+}
+
+.pet-room-stage.modo-noche .window-sky {
+  background: #172545;
+}
+
+.sky-celestial {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffd166;
+  border: 1px solid var(--borde-oscuro);
+  box-shadow: 0 0 8px rgba(255, 209, 102, 0.8);
+  transition: all 0.6s ease;
+}
+
+.pet-room-stage.modo-noche .sky-celestial {
+  background: #fffdf7;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+  top: 14px;
+  right: 16px;
+}
+
+.sky-cloud {
+  position: absolute;
+  background: #fff;
+  border-radius: 6px;
+  opacity: 0.85;
+}
+
+.sky-cloud.cloud-1 {
+  width: 32px;
+  height: 12px;
+  top: 36px;
+  left: -10px;
+  animation: cloud-drift 12s linear infinite;
+}
+
+.sky-cloud.cloud-2 {
+  width: 24px;
+  height: 8px;
+  top: 55px;
+  left: 20px;
+  animation: cloud-drift 18s linear infinite reverse;
+}
+
+@keyframes cloud-drift {
+  from { transform: translateX(-30px); }
+  to   { transform: translateX(110px); }
+}
+
+.window-frame-bars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.window-frame-bars::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: 50%; width: 2px;
+  background: var(--borde-oscuro);
+  transform: translateX(-50%);
+}
+.window-frame-bars::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 50%; height: 2px;
+  background: var(--borde-oscuro);
+  transform: translateY(-50%);
+}
+
+.window-curtain {
+  position: absolute;
+  top: 0; bottom: 0; width: 14px;
+  background: #ffb7c9;
+  border: 1px solid var(--borde-oscuro);
+}
+.window-curtain.left { left: 0; border-right: 2px solid var(--borde-oscuro); }
+.window-curtain.right { right: 0; border-left: 2px solid var(--borde-oscuro); }
+
+/* Cuadro en la pared */
+.room-picture-frame {
+  position: absolute;
+  top: 30px;
+  right: 50px;
+  background: var(--crema);
+  border: 3px solid var(--borde-oscuro);
+  border-radius: 6px;
+  padding: 6px 10px;
+  box-shadow: 2px 2px 0 var(--borde-oscuro);
+  text-align: center;
+}
+
+.picture-couple-art span {
+  display: block;
+  font-family: var(--font-title);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--borde-oscuro);
+}
+
+.picture-couple-art small {
+  font-size: 9px;
+  color: var(--rosa);
+  font-weight: bold;
+}
+
+/* Estantería con plantita */
+.room-shelf {
+  position: absolute;
+  top: 100px;
+  right: 40px;
+  width: 90px;
+  height: 6px;
+  background: #a98059;
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 2px;
+}
+
+.shelf-plant {
+  position: absolute;
+  bottom: 6px;
+  right: 12px;
+}
+
+.plant-pot {
+  width: 16px;
+  height: 12px;
+  background: #df7a4e;
+  border: 1px solid var(--borde-oscuro);
+  border-radius: 2px 2px 4px 4px;
+}
+
+.plant-leaves {
+  position: absolute;
+  bottom: 11px;
+  left: -2px;
+  width: 20px;
+  height: 14px;
+  background: #06d6a0;
+  border: 1px solid var(--borde-oscuro);
+  border-radius: 10px 10px 0 0;
+}
+
+/* Suelo de tarima de madera pixelada */
+.room-floor {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 110px;
+  background: #dfc8a7;
+  border-top: 3px solid var(--borde-oscuro);
+  background-image: 
+    linear-gradient(#caa980 1px, transparent 1px),
+    linear-gradient(90deg, #caa980 1px, transparent 1px);
+  background-size: 100% 22px, 50px 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Alfombrita en forma de corazón o pastel */
+.floor-carpet {
+  width: 140px;
+  height: 65px;
+  background: #ffe3ec;
+  border: 3px dashed #ff9ebb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 1px 1px 0 rgba(0,0,0,0.05);
+}
+
+.carpet-heart {
+  font-size: 20px;
+  color: var(--rosa);
+  opacity: 0.7;
+}
+
+/* Camita para dormir */
+.room-pet-bed {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  width: 80px;
+  height: 52px;
+  z-index: 5;
+}
+
+.bed-cushion {
+  width: 100%;
+  height: 100%;
+  background: #bde0fe;
+  border: 3px solid var(--borde-oscuro);
+  border-radius: 26px;
+  box-shadow: 2px 2px 0 var(--borde-oscuro);
+}
+
+.bed-blanket {
+  position: absolute;
+  bottom: 2px;
+  left: 10px;
+  right: 10px;
+  height: 24px;
+  background: #ffcbf2;
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 0 0 16px 16px;
+  opacity: 0.85;
+}
+
+/* Cuenco de comida doble */
+.room-food-bowl {
+  position: absolute;
+  bottom: 26px;
+  right: 32px;
+  display: flex;
+  gap: 6px;
+  z-index: 5;
+}
+
+.bowl-dish {
+  width: 32px;
+  height: 18px;
+  background: #fffdf7;
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 0 0 12px 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 1px 1px 0 var(--borde-oscuro);
+}
+
+.dish-water-fill {
+  position: absolute;
+  inset: 4px 2px 1px 2px;
+  background: #4cc9f0;
+  border-radius: 0 0 8px 8px;
+}
+
+.dish-food-fill {
+  position: absolute;
+  inset: 4px 2px 1px 2px;
+  background: #a05a2c;
+  border-radius: 0 0 8px 8px;
+  transition: all 0.3s ease;
+}
+
+.dish-food-fill.vacio {
+  height: 0px;
+  inset: 14px 2px 1px 2px;
+}
+
+/* Pelotita de juguete que bota */
+.room-toy-ball {
+  position: absolute;
+  bottom: 30px;
+  left: 140px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ff4b72;
+  border: 2px solid var(--borde-oscuro);
+  box-shadow: 1px 1px 0 var(--borde-oscuro);
+  z-index: 6;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.room-toy-ball.botando {
+  animation: ball-bounce 1.4s ease-in-out infinite;
+}
+
+@keyframes ball-bounce {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(60px, -45px); }
+  50% { transform: translate(120px, 0); }
+  75% { transform: translate(60px, -20px); }
+}
+
+/* ── Mascota Activa en la Habitación ── */
+.pet-actor-wrapper {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+
+.pet-actor-wrapper.anim-pet {
+  animation: pet-happy-bounce 0.6s ease;
+}
+
+.pet-actor-wrapper.en-camita {
+  left: 64px;
+  bottom: 28px;
+  transform: translateX(-50%) scale(0.85);
+}
+
+.pet-actor-wrapper.en-cuenco {
+  left: auto;
+  right: 68px;
+  transform: translateX(50%) scale(0.95);
+}
+
+.pet-actor-wrapper.jugando {
+  animation: pet-play-run 1.4s ease-in-out infinite;
+}
+
+@keyframes pet-happy-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  35% { transform: translateX(-50%) translateY(-18px) scale(1.05); }
+  65% { transform: translateX(-50%) translateY(-6px); }
+}
+
+@keyframes pet-play-run {
+  0%, 100% { transform: translateX(-50%) translate(-20px, 0); }
+  50% { transform: translateX(-50%) translate(40px, -8px); }
+}
+
+/* Efectos FX de la mascota */
+.pet-fx-speech {
+  position: absolute;
+  top: -24px;
+  background: #fffdf7;
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-family: var(--font-title);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--borde-oscuro);
+  box-shadow: 2px 2px 0 var(--borde-oscuro);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: all 0.25s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.pet-fx-speech.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.pet-fx-hearts {
+  position: absolute;
+  top: -16px;
+  display: flex;
+  gap: 6px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.pet-fx-hearts.visible {
+  opacity: 1;
+}
+
+.fx-heart {
+  color: var(--rosa);
+  font-size: 14px;
+  animation: float-heart 1s ease forwards;
+}
+.fx-heart.h1 { animation-delay: 0.05s; }
+.fx-heart.h2 { animation-delay: 0.15s; font-size: 18px; color: #ff4b72; }
+.fx-heart.h3 { animation-delay: 0.25s; }
+
+@keyframes float-heart {
+  0% { transform: translateY(0) scale(0.6); opacity: 0; }
+  40% { transform: translateY(-15px) scale(1.2); opacity: 1; }
+  100% { transform: translateY(-35px) scale(0.9); opacity: 0; }
+}
+
+.pet-fx-sleep {
+  position: absolute;
+  top: -20px;
+  right: -10px;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.pet-fx-sleep.visible {
+  opacity: 1;
+}
+
+.fx-z {
+  color: var(--linea);
+  font-family: var(--font-pixel);
+  font-weight: bold;
+  animation: float-zzz 2s ease-in-out infinite;
+}
+.fx-z.z1 { font-size: 12px; animation-delay: 0s; }
+.fx-z.z2 { font-size: 14px; animation-delay: 0.4s; }
+.fx-z.z3 { font-size: 16px; animation-delay: 0.8s; }
+
+@keyframes float-zzz {
+  0% { transform: translate(0, 0); opacity: 0; }
+  50% { transform: translate(10px, -15px); opacity: 1; }
+  100% { transform: translate(18px, -30px); opacity: 0; }
+}
+
+/* ── Panel de Cuidados & Stats ── */
+.pet-dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+@media (max-width: 768px) {
+  .pet-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pet-actions-toolbar {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.btn-pet-action {
+  background: var(--crema);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: var(--radius-pill);
+  box-shadow: 2px 2px 0 var(--borde-oscuro);
+  padding: 8px 12px;
+  font-family: var(--font-title);
+  font-size: 13px;
+  color: var(--borde-oscuro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.btn-pet-action:hover {
+  background: #fdfaf0;
+  transform: translateY(-1px);
+}
+
+.btn-pet-action:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--borde-oscuro);
+}
+
+.btn-pet-pet:hover { background: #ffe6ee; color: #d6336c; }
+.btn-pet-feed:hover { background: #fff0d4; }
+.btn-pet-play:hover { background: #e0f2fe; }
+.btn-pet-sleep:hover { background: #ede9fe; }
+
+/* Tarjeta de Stats Tamagotchi */
+.pet-stats-card {
+  background: var(--crema);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: var(--radius-box);
+  box-shadow: 2px 2px 0 var(--borde-oscuro);
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+
+.pet-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-label {
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--borde-oscuro);
+}
+
+.stat-hearts-bar {
+  display: flex;
+  gap: 4px;
+}
+
+.stat-h {
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.stat-h.full {
+  color: var(--rosa);
+}
+
+.stat-h.empty {
+  color: #b0c5d4;
+}
+
+/* Cuadro de texto / feedback */
+.pet-dialog-log-box {
+  background: #fffdf7;
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 8px;
+  box-shadow: 3px 3px 0 var(--panel);
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--borde-oscuro);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
