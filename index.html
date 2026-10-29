@@ -413,10 +413,20 @@
                   <p style="font-size: 14px; color: var(--linea);">Pulsa los pines con corazón ♥ para leer la anécdota especial de cada viaje</p>
                 </div>
 
-                <!-- Selector de Mapa (España o Europa) -->
+                <!-- Selector de Mapa (España o Europa) con iconos pixel art en SVG -->
                 <div class="map-view-switcher" role="tablist" aria-label="Cambiar vista del mapa">
-                  <button class="map-tab-btn activo" data-mapa="espana" type="button">🇪🇸 Península Ibérica</button>
-                  <button class="map-tab-btn" data-mapa="europa" type="button">🌍 Europa</button>
+                  <button class="map-tab-btn activo" data-mapa="espana" type="button">
+                    <svg class="pixel-icon" style="vertical-align: middle; margin-right: 4px;" viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M1 2l4-1 6 2 4-1v12l-4 1-6-2-4 1V2zm5 1.2L2 4v9.8l4-.9V3.2zm2 .4v9.8l4 1.3V4.5L8 3.6z"/>
+                    </svg>
+                    <span>Península Ibérica</span>
+                  </button>
+                  <button class="map-tab-btn" data-mapa="europa" type="button">
+                    <svg class="pixel-icon" style="vertical-align: middle; margin-right: 4px;" viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M6 1h4v1H6V1zM4 2h2v1H4V2zm6 0h2v1h-2V2zM2 4h2v2H2V4zm10 0h2v2h-2V4zM1 6h1v4H1V6zm13 0h1v4h-1V6zM2 10h2v2H2v-2zm10 0h2v2h-2v-2zM4 13h2v1H4v-1zm6 0h2v1h-2v-1zM6 14h4v1H6v-1z M7 4h2v2H7V4zm-2 3h6v2H5V7zm1 3h4v2H6v-2z"/>
+                    </svg>
+                    <span>Europa</span>
+                  </button>
                 </div>
               </div>
 

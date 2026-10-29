@@ -1564,6 +1564,10 @@ button {
   box-shadow: 2px 2px 0px var(--borde-oscuro);
 }
 
+.map-tab-btn.activo .pixel-icon {
+  fill: #fff;
+}
+
 .retro-map-container {
   position: relative;
   width: 100%;
