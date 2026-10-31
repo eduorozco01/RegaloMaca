@@ -381,6 +381,7 @@
 
     track.innerHTML = "";
 
+    var hitoActualIdx = 0;
     var indiceFuturo = -1;
     datos.forEach(function (h, i) {
       if (h.tipo === "futuro" && indiceFuturo === -1) indiceFuturo = i;
@@ -394,7 +395,18 @@
     lineaFuturo.className = "timeline-linea-futuro";
     track.appendChild(lineaFuturo);
 
+    var currentYearTracked = null;
+
     datos.forEach(function (h, index) {
+      // Separador de año en la línea del tiempo si cambia de año
+      if (h.year && h.year !== currentYearTracked && h.tipo !== "futuro") {
+        currentYearTracked = h.year;
+        var sep = document.createElement("div");
+        sep.className = "timeline-year-separator";
+        sep.innerHTML = '<span class="timeline-year-badge">' + currentYearTracked + '</span>';
+        track.appendChild(sep);
+      }
+
       var btn = document.createElement("button");
       btn.className = "hito";
       btn.setAttribute("type", "button");
@@ -404,6 +416,12 @@
 
       if (h.tipo === "hoy") btn.classList.add("hito-hoy");
       if (h.tipo === "futuro") btn.classList.add("hito-futuro");
+      if (h.destacado) btn.classList.add("destacado");
+
+      // Alternar etiquetas arriba y abajo para que no se solapen
+      if (index % 2 === 1) {
+        btn.classList.add("hito-bottom");
+      }
 
       var fecha = document.createElement("span");
       fecha.className = "hito-fecha";
@@ -412,7 +430,7 @@
       var punto = document.createElement("span");
       punto.className = "hito-punto";
       if (h.tipo === "hoy" || h.isWebcamAction) {
-        punto.innerHTML = "<svg viewBox='0 0 16 16' width='12' height='12' fill='#1d2b4a'><path d='M2 3h3v2H2zm9 0h3v2h-3zM1 5h14v4H1zm1 4h12v2H2zm2 2h8v2H4zm2 2h4v2H6z'/></svg>";
+        punto.innerHTML = "<svg viewBox='0 0 16 16' width='12' height='12' fill='currentColor'><path d='M2 3h3v2H2zm9 0h3v2h-3zM1 5h14v4H1zm1 4h12v2H2zm2 2h8v2H4zm2 2h4v2H6z'/></svg>";
       }
 
       var titulo = document.createElement("span");
@@ -426,28 +444,130 @@
       if (h.isWebcamAction) {
         var camBadge = document.createElement("span");
         camBadge.className = "hito-hoy-badge";
-        camBadge.textContent = "📷 ¡Foto hoy!";
+        camBadge.textContent = "¡Foto hoy! ✧";
         btn.appendChild(camBadge);
       } else if (h.cancion !== null && h.cancion !== undefined) {
         var mus = document.createElement("span");
-        mus.style.fontSize = "11px";
+        mus.style.fontSize = "13px";
         mus.style.color = "var(--linea)";
         mus.textContent = "♪";
         btn.appendChild(mus);
       }
 
       btn.addEventListener("click", function () {
+        seleccionarHitoEnVisor(index);
         if (h.isWebcamAction) {
           abrirPhotoBoothWebcam(h);
-        } else {
-          abrirTarjetaHito(h);
         }
       });
 
       track.appendChild(btn);
     });
 
-    // Conectar botones de navegación por año
+    // ELEMENTOS DEL VISOR DE HITOS
+    var tvDate = document.getElementById("tv-date");
+    var tvBadge = document.getElementById("tv-badge");
+    var tvCounter = document.getElementById("tv-counter");
+    var tvTitle = document.getElementById("tv-title");
+    var tvDesc = document.getElementById("tv-desc");
+    var tvImg = document.getElementById("tv-img");
+    var tvPlaceholder = document.getElementById("tv-placeholder");
+    var tvMusicBox = document.getElementById("tv-music-box");
+    var tvMusicBtn = document.getElementById("tv-music-btn");
+    var btnPrev = document.getElementById("tv-btn-prev");
+    var btnNext = document.getElementById("tv-btn-next");
+
+    function seleccionarHitoEnVisor(idx) {
+      if (idx < 0) idx = 0;
+      if (idx >= datos.length) idx = datos.length - 1;
+      hitoActualIdx = idx;
+      var h = datos[idx];
+
+      var allHitos = track.querySelectorAll(".hito");
+      allHitos.forEach(function (el) { el.classList.remove("hito-seleccionado"); });
+      var activeEl = track.querySelector(".hito[data-index='" + idx + "']");
+      if (activeEl) {
+        activeEl.classList.add("hito-seleccionado");
+        var contLeft = container.scrollLeft;
+        var contWidth = container.clientWidth;
+        var elLeft = activeEl.offsetLeft;
+        if (elLeft < contLeft + 40 || elLeft > contLeft + contWidth - 80) {
+          container.scrollTo({ left: Math.max(0, elLeft - contWidth / 2 + 50), behavior: "smooth" });
+        }
+      }
+
+      if (tvDate) {
+        var fechaCompleta = h.fecha;
+        if (h.fechaCorta) fechaCompleta = h.fechaCorta + " (" + h.fecha + ")";
+        tvDate.textContent = fechaCompleta;
+      }
+      if (tvBadge) {
+        if (h.destacado) {
+          tvBadge.style.display = "inline-block";
+          tvBadge.textContent = "Hito Destacado ✧";
+        } else if (h.tipo === "hoy") {
+          tvBadge.style.display = "inline-block";
+          tvBadge.textContent = "¡5º Aniversario Hoy! ♥";
+        } else {
+          tvBadge.style.display = "none";
+        }
+      }
+      if (tvCounter) {
+        tvCounter.textContent = (idx + 1) + " / " + datos.length;
+      }
+      if (tvTitle) tvTitle.textContent = h.titulo;
+      if (tvDesc) tvDesc.textContent = h.desc || h.texto || "Un recuerdo maravilloso de nuestros 5 años juntos.";
+
+      if (tvImg && tvPlaceholder) {
+        var fotoSrc = h.foto || ("assets/fotos/" + h.fecha + ".jpg");
+        var testImg = new Image();
+        testImg.onload = function () {
+          tvImg.src = fotoSrc;
+          tvImg.style.display = "block";
+          tvPlaceholder.style.display = "none";
+        };
+        testImg.onerror = function () {
+          tvImg.style.display = "none";
+          tvPlaceholder.style.display = "flex";
+        };
+        testImg.src = fotoSrc;
+      }
+
+      if (tvMusicBox && tvMusicBtn) {
+        if (h.cancion !== null && h.cancion !== undefined) {
+          tvMusicBox.style.display = "block";
+          var canciones = window.MUSICA || [];
+          var tituloCancion = (canciones[h.cancion] && canciones[h.cancion].titulo) ? canciones[h.cancion].titulo : "Melodía";
+          tvMusicBtn.querySelector("span").textContent = "♪ Escuchar: " + tituloCancion;
+          tvMusicBtn.onclick = function () {
+            reproducir(h.cancion);
+          };
+        } else {
+          tvMusicBox.style.display = "none";
+        }
+      }
+    }
+
+    if (btnPrev) {
+      btnPrev.addEventListener("click", function () {
+        if (hitoActualIdx > 0) seleccionarHitoEnVisor(hitoActualIdx - 1);
+      });
+    }
+    if (btnNext) {
+      btnNext.addEventListener("click", function () {
+        if (hitoActualIdx < datos.length - 1) seleccionarHitoEnVisor(hitoActualIdx + 1);
+      });
+    }
+
+    var btnIrAHoy = document.getElementById("btn-ir-a-hoy");
+    if (btnIrAHoy) {
+      btnIrAHoy.addEventListener("click", function () {
+        var hoyIdx = -1;
+        datos.forEach(function (h, i) { if (h.tipo === "hoy") hoyIdx = i; });
+        if (hoyIdx !== -1) seleccionarHitoEnVisor(hoyIdx);
+      });
+    }
+
     var yearBtns = document.querySelectorAll(".year-btn");
     yearBtns.forEach(function (yBtn) {
       yBtn.addEventListener("click", function () {
@@ -456,30 +576,66 @@
 
         var yearSelected = yBtn.getAttribute("data-year");
         if (yearSelected === "todos") {
-          container.scrollTo({ left: 0, behavior: "smooth" });
+          seleccionarHitoEnVisor(0);
           return;
         }
         if (yearSelected === "hoy") {
-          var hoyEl = track.querySelector(".hito-hoy");
-          if (hoyEl) {
-            container.scrollTo({ left: Math.max(0, hoyEl.offsetLeft - 100), behavior: "smooth" });
-          }
+          var hoyIdx = -1;
+          datos.forEach(function (h, i) { if (h.tipo === "hoy") hoyIdx = i; });
+          if (hoyIdx !== -1) seleccionarHitoEnVisor(hoyIdx);
           return;
         }
 
-        // Buscar el primer hito del año seleccionado
-        var targetHito = track.querySelector(".hito[data-year='" + yearSelected + "']");
-        if (targetHito) {
-          container.scrollTo({ left: Math.max(0, targetHito.offsetLeft - 60), behavior: "smooth" });
+        var targetIndex = -1;
+        datos.forEach(function (h, i) {
+          if (h.year === yearSelected && targetIndex === -1) targetIndex = i;
+        });
+        if (targetIndex !== -1) {
+          seleccionarHitoEnVisor(targetIndex);
         }
       });
     });
+
+    window.addEventListener("keydown", function (e) {
+      var secTimeline = document.getElementById("seccion-timeline");
+      if (secTimeline && secTimeline.classList.contains("activa")) {
+        if (e.key === "ArrowLeft") {
+          if (hitoActualIdx > 0) {
+            seleccionarHitoEnVisor(hitoActualIdx - 1);
+            e.preventDefault();
+          }
+        } else if (e.key === "ArrowRight") {
+          if (hitoActualIdx < datos.length - 1) {
+            seleccionarHitoEnVisor(hitoActualIdx + 1);
+            e.preventDefault();
+          }
+        }
+      }
+    });
+
+    var touchStartX = 0, touchEndX = 0;
+    var tvCard = document.getElementById("timeline-viewer-card");
+    if (tvCard) {
+      tvCard.addEventListener("touchstart", function (e) {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+      tvCard.addEventListener("touchend", function (e) {
+        touchEndX = e.changedTouches[0].screenX;
+        var diff = touchEndX - touchStartX;
+        if (diff > 50 && hitoActualIdx > 0) {
+          seleccionarHitoEnVisor(hitoActualIdx - 1);
+        } else if (diff < -50 && hitoActualIdx < datos.length - 1) {
+          seleccionarHitoEnVisor(hitoActualIdx + 1);
+        }
+      }, { passive: true });
+    }
+
+    seleccionarHitoEnVisor(0);
 
     requestAnimationFrame(function () {
       ajustarLineasTimeline(track, datos, indiceFuturo);
     });
 
-    // Drag con ratón
     var isDown = false, startX, scrollLeft;
     container.addEventListener("mousedown", function (e) {
       if (e.target.closest(".hito")) return;
@@ -494,17 +650,6 @@
       var x = e.pageX - container.offsetLeft;
       var walk = (x - startX) * 1.5;
       container.scrollLeft = scrollLeft - walk;
-    });
-
-    // Flechas de teclado
-    container.addEventListener("keydown", function (e) {
-      if (e.key === "ArrowRight") {
-        container.scrollLeft += 180;
-        e.preventDefault();
-      } else if (e.key === "ArrowLeft") {
-        container.scrollLeft -= 180;
-        e.preventDefault();
-      }
     });
   }
 
@@ -685,7 +830,7 @@
 
     var btnShutter = document.createElement("button");
     btnShutter.className = "btn-shutter";
-    btnShutter.innerHTML = "<span>📸 Capturar Foto</span>";
+    btnShutter.innerHTML = "<span>Capturar Foto ✧</span>";
 
     var btnRetake = document.createElement("button");
     btnRetake.className = "btn-abrir";
@@ -753,7 +898,7 @@
 
       var btnUpload = document.createElement("button");
       btnUpload.className = "btn-shutter";
-      btnUpload.innerHTML = "<span>📁 Seleccionar foto</span>";
+      btnUpload.innerHTML = "<span>Seleccionar foto ✧</span>";
       btnUpload.addEventListener("click", function () { fileInput.click(); });
 
       fileInput.addEventListener("change", function () {
@@ -1466,58 +1611,62 @@
   function initDibujo() {
     var canvas = document.getElementById("paint-canvas");
     if (!canvas) return;
-    var ctx = canvas.getContext("2d");
+    var ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+    ctx.imageSmoothingEnabled = false;
+
+    var overlayWelcome = document.getElementById("draw-welcome-overlay");
 
     var estadoDibujo = {
       dibujando: false,
-      modo: "brush", // "brush", "eraser", "stamp"
+      modo: "brush", // "brush", "eraser", "bucket", "stamp"
       color: "#1d2b4a",
       grosor: 6,
       selloActual: "heart",
       ultimoX: 0,
-      ultimoY: 0
+      ultimoY: 0,
+      historial: []
     };
 
-    // Ajustar resolución interna nítida
     canvas.width = 760;
     canvas.height = 460;
 
-    // Cargar dibujo previo o dibujar bienvenida
-    var dibujoGuardado = localStorage.getItem("maca_dibujo_guardado");
-    if (dibujoGuardado) {
-      cargarImagenEnCanvas(dibujoGuardado);
-    } else {
-      dibujarLienzoInicial(ctx);
+    function guardarEstadoEnHistorial() {
+      try {
+        if (estadoDibujo.historial.length >= 15) {
+          estadoDibujo.historial.shift();
+        }
+        var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        estadoDibujo.historial.push(imgData);
+      } catch (e) {}
     }
 
-    function dibujarLienzoInicial(c) {
-      c.clearRect(0, 0, canvas.width, canvas.height);
-      // Mensaje tierno de dedicatoria inicial
-      c.fillStyle = "#ff9ebb";
-      c.font = "bold 26px 'Pixelify Sans', cursive, sans-serif";
-      c.textAlign = "center";
-      c.fillText("¡Dibuja algo bonito aquí! ♥", canvas.width / 2, 190);
+    function ocultarOverlaySiExiste() {
+      if (overlayWelcome && !overlayWelcome.classList.contains("oculto")) {
+        overlayWelcome.classList.add("oculto");
+      }
+    }
 
-      c.fillStyle = "#3b8cff";
-      c.font = "16px 'DotGothic16', monospace";
-      c.fillText("Usa los colores, la goma o los sellos de arriba", canvas.width / 2, 230);
-      c.fillText("y pulsa 'Guardar ♥' para dejarlo en nuestro rincón", canvas.width / 2, 260);
+    var dibujoGuardado = null;
+    try {
+      dibujoGuardado = localStorage.getItem("maca_dibujo_guardado");
+    } catch (e) {}
 
-      // Pequeño corazón pixel dibujado en el centro
-      c.fillStyle = "#ff4b72";
-      var hx = canvas.width / 2 - 12, hy = 110;
-      c.fillRect(hx+4, hy, 6, 4); c.fillRect(hx+14, hy, 6, 4);
-      c.fillRect(hx+2, hy+4, 20, 6);
-      c.fillRect(hx+4, hy+10, 16, 4);
-      c.fillRect(hx+7, hy+14, 10, 4);
-      c.fillRect(hx+10, hy+18, 4, 4);
+    if (dibujoGuardado) {
+      cargarImagenEnCanvas(dibujoGuardado);
+      ocultarOverlaySiExiste();
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      guardarEstadoEnHistorial();
     }
 
     function cargarImagenEnCanvas(dataUrl) {
       var img = new Image();
       img.onload = function () {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.imageSmoothingEnabled = false;
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        guardarEstadoEnHistorial();
       };
       img.src = dataUrl;
     }
@@ -1535,32 +1684,105 @@
       }
 
       return {
-        x: (clientX - rect.left) * scaleX,
-        y: (clientY - rect.top) * scaleY
+        x: Math.round((clientX - rect.left) * scaleX),
+        y: Math.round((clientY - rect.top) * scaleY)
       };
     }
 
+    function floodFill(startX, startY, fillHex) {
+      var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      var data = imgData.data;
+      var width = canvas.width;
+      var height = canvas.height;
+
+      var targetIdx = (startY * width + startX) * 4;
+      var targetR = data[targetIdx];
+      var targetG = data[targetIdx + 1];
+      var targetB = data[targetIdx + 2];
+      var targetA = data[targetIdx + 3];
+
+      var fillR = 0, fillG = 0, fillB = 0, fillA = 255;
+      if (fillHex.startsWith("#")) {
+        if (fillHex.length === 7) {
+          fillR = parseInt(fillHex.slice(1, 3), 16);
+          fillG = parseInt(fillHex.slice(3, 5), 16);
+          fillB = parseInt(fillHex.slice(5, 7), 16);
+        } else if (fillHex.length === 4) {
+          fillR = parseInt(fillHex[1] + fillHex[1], 16);
+          fillG = parseInt(fillHex[2] + fillHex[2], 16);
+          fillB = parseInt(fillHex[3] + fillHex[3], 16);
+        }
+      }
+
+      if (targetR === fillR && targetG === fillG && targetB === fillB && targetA === fillA) {
+        return;
+      }
+
+      function colorCoincide(idx) {
+        var r = data[idx], g = data[idx + 1], b = data[idx + 2], a = data[idx + 3];
+        return Math.abs(r - targetR) <= 18 &&
+               Math.abs(g - targetG) <= 18 &&
+               Math.abs(b - targetB) <= 18 &&
+               Math.abs(a - targetA) <= 18;
+      }
+
+      var queue = [startX, startY];
+      var visited = new Uint8Array(width * height);
+
+      while (queue.length > 0) {
+        var cy = queue.pop();
+        var cx = queue.pop();
+        var pos = cy * width + cx;
+
+        if (visited[pos]) continue;
+        visited[pos] = 1;
+
+        var pIdx = pos * 4;
+        if (!colorCoincide(pIdx)) continue;
+
+        data[pIdx] = fillR;
+        data[pIdx + 1] = fillG;
+        data[pIdx + 2] = fillB;
+        data[pIdx + 3] = fillA;
+
+        if (cx > 0 && !visited[pos - 1]) queue.push(cx - 1, cy);
+        if (cx < width - 1 && !visited[pos + 1]) queue.push(cx + 1, cy);
+        if (cy > 0 && !visited[pos - width]) queue.push(cx, cy - 1);
+        if (cy < height - 1 && !visited[pos + width]) queue.push(cx, cy + 1);
+      }
+
+      ctx.putImageData(imgData, 0, 0);
+    }
+
     function empezarTrazo(e) {
+      ocultarOverlaySiExiste();
       var pos = obtenerPosicion(e);
 
+      if (estadoDibujo.modo === "bucket") {
+        guardarEstadoEnHistorial();
+        floodFill(pos.x, pos.y, estadoDibujo.color);
+        return;
+      }
+
       if (estadoDibujo.modo === "stamp") {
+        guardarEstadoEnHistorial();
         estamparSello(pos.x, pos.y);
         return;
       }
 
+      guardarEstadoEnHistorial();
       estadoDibujo.dibujando = true;
       estadoDibujo.ultimoX = pos.x;
       estadoDibujo.ultimoY = pos.y;
 
-      ctx.beginPath();
-      ctx.arc(pos.x, pos.y, estadoDibujo.grosor / 2, 0, Math.PI * 2);
       ctx.fillStyle = (estadoDibujo.modo === "eraser") ? "#fffdf7" : estadoDibujo.color;
       if (estadoDibujo.modo === "eraser") {
         ctx.globalCompositeOperation = "destination-out";
       } else {
         ctx.globalCompositeOperation = "source-over";
       }
-      ctx.fill();
+      var r = Math.round(estadoDibujo.grosor / 2);
+      ctx.fillRect(pos.x - r, pos.y - r, estadoDibujo.grosor, estadoDibujo.grosor);
     }
 
     function trazar(e) {
@@ -1568,19 +1790,20 @@
       e.preventDefault();
       var pos = obtenerPosicion(e);
 
-      ctx.beginPath();
-      ctx.moveTo(estadoDibujo.ultimoX, estadoDibujo.ultimoY);
-      ctx.lineTo(pos.x, pos.y);
       ctx.strokeStyle = (estadoDibujo.modo === "eraser") ? "#fffdf7" : estadoDibujo.color;
       ctx.lineWidth = estadoDibujo.grosor;
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
+      ctx.lineCap = "square";
+      ctx.lineJoin = "miter";
 
       if (estadoDibujo.modo === "eraser") {
         ctx.globalCompositeOperation = "destination-out";
       } else {
         ctx.globalCompositeOperation = "source-over";
       }
+
+      ctx.beginPath();
+      ctx.moveTo(estadoDibujo.ultimoX, estadoDibujo.ultimoY);
+      ctx.lineTo(pos.x, pos.y);
       ctx.stroke();
 
       estadoDibujo.ultimoX = pos.x;
@@ -1594,9 +1817,11 @@
     function estamparSello(x, y) {
       ctx.globalCompositeOperation = "source-over";
       var s = estadoDibujo.selloActual;
+      var c = estadoDibujo.color;
+      if (c === "#fffdf7" || c === "transparent") c = "#1d2b4a";
 
       if (s === "heart") {
-        ctx.fillStyle = estadoDibujo.color === "#fffdf7" ? "#ff4b72" : estadoDibujo.color;
+        ctx.fillStyle = (c === "#1d2b4a") ? "#ff4b72" : c;
         var hx = x - 12, hy = y - 12;
         ctx.fillRect(hx+4, hy, 6, 4); ctx.fillRect(hx+14, hy, 6, 4);
         ctx.fillRect(hx+2, hy+4, 20, 6);
@@ -1604,54 +1829,104 @@
         ctx.fillRect(hx+7, hy+14, 10, 4);
         ctx.fillRect(hx+10, hy+18, 4, 4);
       } else if (s === "star") {
-        ctx.fillStyle = estadoDibujo.color;
+        ctx.fillStyle = c;
         ctx.fillRect(x - 2, y - 14, 4, 28);
         ctx.fillRect(x - 14, y - 2, 28, 4);
         ctx.fillRect(x - 6, y - 6, 12, 12);
+        ctx.fillRect(x - 10, y - 10, 4, 4);
+        ctx.fillRect(x + 6, y - 10, 4, 4);
+        ctx.fillRect(x - 10, y + 6, 4, 4);
+        ctx.fillRect(x + 6, y + 6, 4, 4);
       } else if (s === "cat") {
-        ctx.font = "28px sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("🐱", x, y);
+        ctx.fillStyle = c;
+        var cx = x - 12, cy = y - 10;
+        ctx.fillRect(cx + 2, cy, 4, 6);
+        ctx.fillRect(cx + 18, cy, 4, 6);
+        ctx.fillRect(cx, cy + 4, 24, 14);
+        ctx.fillStyle = "#fffdf7";
+        ctx.fillRect(cx + 4, cy + 8, 4, 4);
+        ctx.fillRect(cx + 16, cy + 8, 4, 4);
+        ctx.fillStyle = c;
+        ctx.fillRect(cx + 6, cy + 9, 2, 3);
+        ctx.fillRect(cx + 18, cy + 9, 2, 3);
+        ctx.fillStyle = "#ffb7c9";
+        ctx.fillRect(cx + 11, cy + 12, 2, 2);
       } else if (s === "flower") {
-        ctx.font = "28px sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("✿", x, y);
+        var fx = x - 12, fy = y - 12;
+        ctx.fillStyle = (c === "#1d2b4a") ? "#ffd166" : c;
+        ctx.fillRect(fx + 9, fy + 2, 6, 6);
+        ctx.fillRect(fx + 2, fy + 9, 6, 6);
+        ctx.fillRect(fx + 16, fy + 9, 6, 6);
+        ctx.fillRect(fx + 9, fy + 16, 6, 6);
+        ctx.fillStyle = "#ff4b72";
+        ctx.fillRect(fx + 8, fy + 8, 8, 8);
       }
     }
 
-    // Eventos de puntero unificados (ratón, pantalla táctil y stylus)
     canvas.addEventListener("pointerdown", empezarTrazo);
     window.addEventListener("pointermove", trazar);
     window.addEventListener("pointerup", terminarTrazo);
 
-    // Controles de herramientas
     var toolBrush = document.getElementById("tool-brush");
     var toolEraser = document.getElementById("tool-eraser");
+    var toolBucket = document.getElementById("tool-bucket");
+    var btnUndo = document.getElementById("btn-draw-undo");
     var statusMsg = document.getElementById("draw-status-msg");
+
+    function desmarcarHerramientas() {
+      if (toolBrush) toolBrush.classList.remove("activo");
+      if (toolEraser) toolEraser.classList.remove("activo");
+      if (toolBucket) toolBucket.classList.remove("activo");
+      document.querySelectorAll(".btn-stamp-tool").forEach(function (b) { b.classList.remove("activo"); });
+    }
 
     if (toolBrush) {
       toolBrush.addEventListener("click", function () {
         estadoDibujo.modo = "brush";
+        desmarcarHerramientas();
         toolBrush.classList.add("activo");
-        if (toolEraser) toolEraser.classList.remove("activo");
-        document.querySelectorAll(".btn-stamp-tool").forEach(function (b) { b.classList.remove("activo"); });
-        if (statusMsg) statusMsg.textContent = "Pincel activo";
+        if (statusMsg) statusMsg.textContent = "Pincel pixel activo";
       });
     }
 
     if (toolEraser) {
       toolEraser.addEventListener("click", function () {
         estadoDibujo.modo = "eraser";
+        desmarcarHerramientas();
         toolEraser.classList.add("activo");
-        if (toolBrush) toolBrush.classList.remove("activo");
-        document.querySelectorAll(".btn-stamp-tool").forEach(function (b) { b.classList.remove("activo"); });
         if (statusMsg) statusMsg.textContent = "Goma de borrar activa";
       });
     }
 
-    // Grosores
+    if (toolBucket) {
+      toolBucket.addEventListener("click", function () {
+        estadoDibujo.modo = "bucket";
+        desmarcarHerramientas();
+        toolBucket.classList.add("activo");
+        if (statusMsg) statusMsg.textContent = "Cubo de relleno listo: haz clic para rellenar";
+      });
+    }
+
+    if (btnUndo) {
+      btnUndo.addEventListener("click", function () {
+        if (estadoDibujo.historial.length > 0) {
+          var anterior = estadoDibujo.historial.pop();
+          ctx.putImageData(anterior, 0, 0);
+          if (statusMsg) statusMsg.textContent = "Acción deshecha ✧";
+        }
+      });
+    }
+
+    window.addEventListener("keydown", function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+        var secDibujo = document.getElementById("seccion-dibujo");
+        if (secDibujo && secDibujo.classList.contains("activa")) {
+          if (btnUndo) btnUndo.click();
+          e.preventDefault();
+        }
+      }
+    });
+
     document.querySelectorAll(".btn-stroke-size").forEach(function (btn) {
       btn.addEventListener("click", function () {
         document.querySelectorAll(".btn-stroke-size").forEach(function (b) { b.classList.remove("activo"); });
@@ -1660,39 +1935,36 @@
       });
     });
 
-    // Colores
     document.querySelectorAll(".color-swatch").forEach(function (swatch) {
       swatch.addEventListener("click", function () {
         document.querySelectorAll(".color-swatch").forEach(function (s) { s.classList.remove("activo"); });
         swatch.classList.add("activo");
         estadoDibujo.color = swatch.getAttribute("data-color");
         if (estadoDibujo.modo === "eraser") {
-          toolBrush.click();
+          if (toolBrush) toolBrush.click();
         }
       });
     });
 
-    // Sellos
     document.querySelectorAll(".btn-stamp-tool").forEach(function (stampBtn) {
       stampBtn.addEventListener("click", function () {
-        document.querySelectorAll(".btn-stamp-tool").forEach(function (b) { b.classList.remove("activo"); });
+        desmarcarHerramientas();
         stampBtn.classList.add("activo");
-        if (toolBrush) toolBrush.classList.remove("activo");
-        if (toolEraser) toolEraser.classList.remove("activo");
-
         estadoDibujo.modo = "stamp";
         estadoDibujo.selloActual = stampBtn.getAttribute("data-stamp");
-        if (statusMsg) statusMsg.textContent = "Sello listo: haz clic en el lienzo";
+        if (statusMsg) statusMsg.textContent = "Sello pixel listo: haz clic en el lienzo";
       });
     });
 
-    // Botón Limpiar
     var btnClear = document.getElementById("btn-draw-clear");
     if (btnClear) {
       btnClear.addEventListener("click", function () {
         if (confirm("¿Quieres limpiar todo el lienzo para empezar de nuevo?")) {
+          guardarEstadoEnHistorial();
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          localStorage.removeItem("maca_dibujo_guardado");
+          try {
+            localStorage.removeItem("maca_dibujo_guardado");
+          } catch (e) {}
           if (statusMsg) statusMsg.textContent = "Lienzo limpio";
           var roomImg = document.getElementById("pet-room-drawing-img");
           var emptyPh = document.getElementById("gallery-empty-state");
@@ -1700,24 +1972,37 @@
             roomImg.style.display = "none";
             emptyPh.style.display = "flex";
           }
+          if (overlayWelcome) {
+            overlayWelcome.classList.remove("oculto");
+          }
         }
       });
     }
 
-    // Botón Guardar
     var btnSave = document.getElementById("btn-draw-save");
     var toast = document.getElementById("draw-saved-toast");
     if (btnSave) {
       btnSave.addEventListener("click", function () {
         try {
-          var dataUrl = canvas.toDataURL("image/png");
+          var tempCanvas = document.createElement("canvas");
+          tempCanvas.width = canvas.width;
+          tempCanvas.height = canvas.height;
+          var tempCtx = tempCanvas.getContext("2d");
+          tempCtx.imageSmoothingEnabled = false;
+
+          tempCtx.fillStyle = "#fffdf7";
+          tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+          tempCtx.drawImage(canvas, 0, 0);
+
+          var dataUrl = tempCanvas.toDataURL("image/png");
           localStorage.setItem("maca_dibujo_guardado", dataUrl);
+
           if (toast) {
             toast.classList.add("visible");
             setTimeout(function () { toast.classList.remove("visible"); }, 1800);
           }
-          if (statusMsg) statusMsg.textContent = "✓ ¡Guardado en la web y colgado en la habitación!";
-          // Actualizar la miniatura en la habitación de la mascota al instante
+          if (statusMsg) statusMsg.textContent = "✓ ¡Guardado en nuestro rincón y colgado en la habitación!";
+
           var roomImg = document.getElementById("pet-room-drawing-img");
           var emptyPh = document.getElementById("gallery-empty-state");
           if (roomImg && emptyPh) {
@@ -1731,25 +2016,21 @@
       });
     }
 
-    // Botón Descargar PNG
     var btnDownload = document.getElementById("btn-draw-download");
     if (btnDownload) {
       btnDownload.addEventListener("click", function () {
-        // Creamos un canvas temporal con fondo blanco/crema para la descarga
         var tempCanvas = document.createElement("canvas");
         tempCanvas.width = canvas.width;
         tempCanvas.height = canvas.height;
         var tempCtx = tempCanvas.getContext("2d");
+        tempCtx.imageSmoothingEnabled = false;
 
-        // Fondo crema de papel
         tempCtx.fillStyle = "#fffdf7";
         tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-        // Dibujo
         tempCtx.drawImage(canvas, 0, 0);
 
-        // Estampar firma de aniversario
-        tempCtx.fillStyle = "#ff9ebb";
-        tempCtx.font = "bold 14px monospace";
+        tempCtx.fillStyle = "#ffb7c9";
+        tempCtx.font = "bold 14px 'DotGothic16', monospace";
         tempCtx.textAlign = "right";
         tempCtx.fillText("5 años juntos ♥", tempCanvas.width - 20, tempCanvas.height - 18);
 
@@ -1948,7 +2229,7 @@
         petStage.classList.remove("modo-noche");
         petActor.classList.remove("en-camita");
         fxSleep.classList.remove("visible");
-        if (labelSleep) labelSleep.textContent = "Dormir 💤";
+        if (labelSleep) labelSleep.textContent = "Dormir";
       }
     }
 
@@ -2008,7 +2289,7 @@
         toyBall.classList.add("botando");
       }
       petActor.classList.add("jugando");
-      mostrarSpeech("¡yupi! ⚽");
+      mostrarSpeech("¡yupi! ✧");
       mostrarMensaje(data.playText);
 
       petEstado.felicidad = 5;
@@ -2036,7 +2317,7 @@
         petActor.classList.remove("jugando", "en-cuenco");
         petActor.classList.add("en-camita");
         fxSleep.classList.add("visible");
-        if (labelSleep) labelSleep.textContent = "Despertar ☀️";
+        if (labelSleep) labelSleep.textContent = "Despertar";
         mostrarMensaje(data.sleepText + " La habitación está a oscuras. Shhh... que duerma bien ♥");
 
         petEstado.energia = 5;
@@ -2047,7 +2328,7 @@
       } else {
         despertarSiDuerme();
         mostrarSpeech(data.speech);
-        mostrarMensaje("¡" + petEstado.nombre + " se ha despertado con mucha energía y con ganas de verte! ☀️");
+        mostrarMensaje("¡" + petEstado.nombre + " se ha despertado con mucha energía y con ganas de verte! ✧");
         playChiptuneTone(523.25, 0.1, "triangle", 0.18);
         setTimeout(function () { playChiptuneTone(659.25, 0.18, "triangle", 0.2); }, 100);
       }
@@ -2125,7 +2406,48 @@
   /* ══════════════════════════════════════════════════════════════
    *  INICIALIZACIÓN GENERAL
    * ══════════════════════════════════════════════════════════════ */
+  /* ══════════════════════════════════════════════════════════════
+   *  SISTEMA DE TEMAS (AZUL, ROJO, ROSA)
+   * ══════════════════════════════════════════════════════════════ */
+  function initThemes() {
+    var temaGuardado = "azul";
+    try {
+      temaGuardado = localStorage.getItem("maca_tema_color") || "azul";
+    } catch (e) {
+      temaGuardado = "azul";
+    }
+
+    aplicarTema(temaGuardado);
+
+    var themeButtons = document.querySelectorAll(".btn-theme-dot");
+    themeButtons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var nuevoTema = btn.getAttribute("data-set-theme");
+        aplicarTema(nuevoTema);
+        try {
+          localStorage.setItem("maca_tema_color", nuevoTema);
+        } catch (e) {}
+      });
+    });
+
+    function aplicarTema(tema) {
+      if (!tema || (tema !== "azul" && tema !== "rojo" && tema !== "rosa")) {
+        tema = "azul";
+      }
+      document.documentElement.setAttribute("data-theme", tema);
+      var btns = document.querySelectorAll(".btn-theme-dot");
+      btns.forEach(function (b) {
+        if (b.getAttribute("data-set-theme") === tema) {
+          b.classList.add("activo");
+        } else {
+          b.classList.remove("activo");
+        }
+      });
+    }
+  }
+
   function init() {
+    initThemes();
     initEntrada();
     initNav();
     initInicio();

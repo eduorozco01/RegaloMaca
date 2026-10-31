@@ -3,30 +3,115 @@
  * ═══════════════════════════════════════════════════════════════ */
 
 /* ── Google Fonts ─────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=DotGothic16&family=Pixelify+Sans:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DotGothic16&family=Pixelify+Sans:wght@400;600;700&family=Silkscreen:wght@400;700&display=swap');
 
 /* ── Variables de paleta y medidas ───────────────────────────── */
 :root {
+  /* TEMA AZUL (Por defecto) */
   --bg:           #e5edf2;   /* fondo general con textura dither */
-  --panel:        #cfe6f0;   /* azul suave pastel */
-  --panel-light:  #dcf0f7;   /* azul muy suave */
-  --linea:        #3b8cff;   /* azul vivo característico */
-  --borde-oscuro: #1d2b4a;   /* color de anclaje oscuro para solidez */
-  --texto:        #1d2b4a;   /* texto legible con alto contraste */
-  --crema:        #fffdf7;   /* fondo papel / contenido principal */
-  --rosa:         #ff9ebb;   /* acento exclusivo para corazones/detalles */
+  --papel:        #fffdf7;   /* fondo papel / contenido principal */
+  --panel:        #cfe6f0;   /* suave pastel */
+  --panel-light:  #dcf0f7;   /* panel muy suave */
+  --linea:        #3b8cff;   /* línea viva característica */
+  --borde-oscuro: #1d2b4a;   /* tinta / borde de anclaje */
+  --texto:        #1d2b4a;   /* tinta texto con alto contraste */
+  --tinta:        #1d2b4a;
+  --crema:        #fffdf7;   /* compatibilidad */
+  --acento:       #ffb7c9;   /* acento pastel */
+  --rosa:         #ffb7c9;   /* acento corazones/detalles */
   --rosa-hover:   #ff759f;
-  --lcd-bg:       #c7dbbf;   /* verde/gris LCD tamagotchi */
+  --sombra:       #3b8cff;   /* sombra dura offset */
+  --dither-dot1:  rgba(59, 140, 255, 0.14);
+  --dither-dot2:  rgba(29, 43, 74, 0.08);
+
+  /* Mar y tierra del mapa */
+  --mar-bg:       #d7ebf5;
+  --mar-dot:      #b9ddf0;
+  --tierra-bg:    #fff9ef;
+  --tierra-stroke:#1d2b4a;
+
+  /* Tamagotchi / LCD */
+  --tama-cuerpo:  #cfe6f0;
+  --tama-borde:   #1d2b4a;
+  --lcd-bg:       #c7dbbf;
   --lcd-border:   #8ca583;
 
+  /* Tipografías */
   --font-body:    'DotGothic16', monospace, sans-serif;
   --font-title:   'Pixelify Sans', 'DotGothic16', sans-serif;
+  --font-numbers: 'DotGothic16', 'Silkscreen', monospace;
 
   --sidebar-w:    240px;
   --radius-box:   16px;
   --radius-pill:  999px;
 
   /* Sombra dura pixel (sin desenfoque) */
+  --pixel-shadow: 4px 4px 0px var(--linea);
+  --pixel-shadow-dark: 4px 4px 0px var(--borde-oscuro);
+  --pixel-shadow-sm: 2px 2px 0px var(--linea);
+}
+
+/* TEMA ROJO: línea #d63a4a, suave #fbd9d6, tinta #3a1620, crema #fffaf5, acento #ffd27a */
+html[data-theme="rojo"] {
+  --bg:           #fbf1f0;
+  --papel:        #fffaf5;
+  --panel:        #fbd9d6;
+  --panel-light:  #fdeceb;
+  --linea:        #d63a4a;
+  --borde-oscuro: #3a1620;
+  --texto:        #3a1620;
+  --tinta:        #3a1620;
+  --crema:        #fffaf5;
+  --acento:       #ffd27a;
+  --rosa:         #ffd27a;
+  --rosa-hover:   #ffb833;
+  --sombra:       #d63a4a;
+  --dither-dot1:  rgba(214, 58, 74, 0.14);
+  --dither-dot2:  rgba(58, 22, 32, 0.08);
+
+  --mar-bg:       #fae5e3;
+  --mar-dot:      #f5c5c0;
+  --tierra-bg:    #fffdf9;
+  --tierra-stroke:#3a1620;
+
+  --tama-cuerpo:  #fbd9d6;
+  --tama-borde:   #3a1620;
+  --lcd-bg:       #d8e2d4;
+  --lcd-border:   #97a892;
+
+  --pixel-shadow: 4px 4px 0px var(--linea);
+  --pixel-shadow-dark: 4px 4px 0px var(--borde-oscuro);
+  --pixel-shadow-sm: 2px 2px 0px var(--linea);
+}
+
+/* TEMA ROSA: línea #ec6aa5, suave #ffdcea, tinta #4a1d3a, crema #fffafb, acento #b9a3ff */
+html[data-theme="rosa"] {
+  --bg:           #faf0f5;
+  --papel:        #fffafb;
+  --panel:        #ffdcea;
+  --panel-light:  #fef0f6;
+  --linea:        #ec6aa5;
+  --borde-oscuro: #4a1d3a;
+  --texto:        #4a1d3a;
+  --tinta:        #4a1d3a;
+  --crema:        #fffafb;
+  --acento:       #b9a3ff;
+  --rosa:         #b9a3ff;
+  --rosa-hover:   #9e81ff;
+  --sombra:       #ec6aa5;
+  --dither-dot1:  rgba(236, 106, 165, 0.14);
+  --dither-dot2:  rgba(74, 29, 58, 0.08);
+
+  --mar-bg:       #fae5f0;
+  --mar-dot:      #f5cbe1;
+  --tierra-bg:    #fffdfc;
+  --tierra-stroke:#4a1d3a;
+
+  --tama-cuerpo:  #ffdcea;
+  --tama-borde:   #4a1d3a;
+  --lcd-bg:       #e0dfd5;
+  --lcd-border:   #a49f96;
+
   --pixel-shadow: 4px 4px 0px var(--linea);
   --pixel-shadow-dark: 4px 4px 0px var(--borde-oscuro);
   --pixel-shadow-sm: 2px 2px 0px var(--linea);
@@ -56,8 +141,8 @@ body {
 
   /* Textura Dither / Trama Neocities nítida y repetible */
   background-image: 
-    radial-gradient(circle at 1px 1px, rgba(59, 140, 255, 0.14) 1px, transparent 0),
-    radial-gradient(circle at 3px 3px, rgba(29, 43, 74, 0.08) 1px, transparent 0);
+    radial-gradient(circle at 1px 1px, var(--dither-dot1) 1px, transparent 0),
+    radial-gradient(circle at 3px 3px, var(--dither-dot2) 1px, transparent 0);
   background-size: 8px 8px, 8px 8px;
 
   /* Cursor pixel mano con fallback */
@@ -3840,4 +3925,337 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+
+/* ── Tipografía nítida para números, cifras y etiquetas pequeñas ── */
+.counter-box,
+.counter-val,
+.counter-label,
+.year-btn,
+.hito-fecha,
+.mini-timeline-strip,
+.mini-strip-year,
+.tira-fecha,
+.time-val,
+.map-legend,
+.player-time,
+.cassette-counter-box,
+.cassette-counter-display,
+.cassette-badge,
+.track-num,
+.track-dur,
+.tape-time,
+.lcd-track-time,
+.lcd-counter-num,
+.pet-stat-row,
+.tamagotchi-egg,
+.egg-brand,
+.brand-five {
+  font-family: var(--font-numbers) !important;
+  -webkit-font-smoothing: none !important;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed !important;
+  letter-spacing: 0px !important;
+}
+
+/* Ningún texto de menos de 13px */
+.nav-cat-label,
+.site-subtitle,
+.stamp-date,
+.map-tab-btn,
+.btn-stroke-size,
+.btn-tool-pill,
+.map-legend,
+.mini-player-artist,
+.hito-fecha,
+.player-time {
+  font-size: 13px !important;
+}
+
+
+/* Selector de Tema en Sidebar */
+.theme-picker-widget {
+  background: var(--panel-light);
+  border: 3px solid var(--borde-oscuro);
+  border-radius: var(--radius-box);
+  box-shadow: var(--pixel-shadow);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.theme-picker-label {
+  font-family: var(--font-numbers);
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--borde-oscuro);
+  text-transform: lowercase;
+  letter-spacing: 1px;
+}
+.theme-buttons-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.btn-theme-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 2px solid var(--borde-oscuro);
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  transition: transform .1s ease;
+}
+.btn-theme-dot:hover {
+  transform: scale(1.15);
+}
+.btn-theme-dot.activo {
+  outline: 2px solid var(--linea);
+  outline-offset: 2px;
+  box-shadow: 2px 2px 0 var(--borde-oscuro);
+}
+.btn-theme-dot[data-set-theme="azul"] {
+  background: #3b8cff;
+}
+.btn-theme-dot[data-set-theme="rojo"] {
+  background: #d63a4a;
+}
+.btn-theme-dot[data-set-theme="rosa"] {
+  background: #ec6aa5;
+}
+
+
+/* ── VISOR DE HITO SELECCIONADO DEBAJO DE LA LÍNEA DEL TIEMPO ── */
+.timeline-viewer-card {
+  margin-top: 24px;
+  background: var(--papel);
+  border: 3px solid var(--borde-oscuro);
+  border-radius: var(--radius-box);
+  box-shadow: var(--pixel-shadow);
+  padding: 20px 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.timeline-viewer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 2px dashed var(--linea);
+  padding-bottom: 12px;
+}
+
+.timeline-viewer-nav-btns {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.tv-nav-btn {
+  background: var(--panel);
+  border: 2px solid var(--borde-oscuro);
+  box-shadow: 2px 2px 0 var(--borde-oscuro);
+  font-family: var(--font-numbers);
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--borde-oscuro);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: transform .1s ease, box-shadow .1s ease;
+}
+
+.tv-nav-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--borde-oscuro);
+}
+
+.tv-nav-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--borde-oscuro);
+}
+
+.tv-counter-badge {
+  font-family: var(--font-numbers);
+  font-size: 13px;
+  color: var(--borde-oscuro);
+  background: var(--panel-light);
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 6px;
+  padding: 5px 10px;
+}
+
+.timeline-viewer-body {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .timeline-viewer-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+.timeline-viewer-photo-wrapper {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 3px solid var(--borde-oscuro);
+  border-radius: 10px;
+  background: var(--panel-light);
+  overflow: hidden;
+  box-shadow: 3px 3px 0 var(--borde-oscuro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.timeline-viewer-photo-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.timeline-viewer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tv-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tv-date-chip {
+  font-family: var(--font-numbers);
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--papel);
+  background: var(--borde-oscuro);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.tv-special-chip {
+  font-family: var(--font-numbers);
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--borde-oscuro);
+  background: var(--rosa);
+  padding: 4px 8px;
+  border: 2px solid var(--borde-oscuro);
+  border-radius: 6px;
+}
+
+.tv-title {
+  font-family: var(--font-title);
+  font-size: 24px;
+  color: var(--borde-oscuro);
+  line-height: 1.25;
+}
+
+.tv-desc {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--borde-oscuro);
+}
+
+/* Hitos con destacado: true nodo más grande y etiqueta visible */
+.hito.destacado .hito-punto {
+  width: 20px;
+  height: 20px;
+  border-width: 3px;
+  box-shadow: 0 0 0 3px var(--linea), 3px 3px 0 var(--borde-oscuro);
+}
+.hito.destacado .hito-titulo {
+  font-weight: bold;
+  color: var(--borde-oscuro);
+}
+
+/* Separadores de año en la línea horizontal */
+.timeline-year-separator {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  height: 120px;
+  z-index: 2;
+  pointer-events: none;
+}
+.timeline-year-badge {
+  font-family: var(--font-numbers);
+  font-size: 14px;
+  font-weight: bold;
+  background: var(--borde-oscuro);
+  color: var(--papel);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 2px solid var(--papel);
+  box-shadow: 2px 2px 0 var(--linea);
+}
+
+/* Hito activo / seleccionado en la línea */
+.hito.hito-seleccionado .hito-punto {
+  background: var(--rosa) !important;
+  outline: 3px solid var(--borde-oscuro);
+  outline-offset: 2px;
+  transform: scale(1.25);
+}
+
+/* Trazos sin antialiasing en Dibujo (pixel art nítido) */
+#paint-canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Overlay de bienvenida en dibujo (NO parte del canvas) */
+.draw-welcome-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  background: transparent;
+  transition: opacity .2s ease;
+  z-index: 4;
+}
+.draw-welcome-overlay.oculto {
+  display: none !important;
+  opacity: 0;
+}
+.draw-welcome-heart {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 8px;
+}
+.draw-welcome-title {
+  font-family: var(--font-title);
+  font-size: 24px;
+  color: var(--rosa);
+  margin-bottom: 4px;
+}
+.draw-welcome-sub {
+  font-family: var(--font-numbers);
+  font-size: 14px;
+  color: var(--linea);
 }
