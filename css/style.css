@@ -227,20 +227,50 @@ button {
   justify-content: center;
 }
 
-/* Contenedor central - Opción 4: Doble Marco Pixel Art / Arcade Retro */
+/* Contenedor central con festoneado lateral de capilla corregido */
 .scallop-wrapper {
   position: relative;
   width: 100%;
   max-width: 1140px;
   background: var(--crema);
-  border: 4px solid var(--borde-oscuro);
-  border-radius: 0px;
-  outline: 2px dashed var(--linea);
-  outline-offset: -8px;
+  border: 3px solid var(--borde-oscuro);
+  border-radius: 24px;
   box-shadow: 8px 8px 0px var(--linea);
   padding: 24px 28px 0px;
   display: flex;
   flex-direction: column;
+}
+
+/* Festoneado en los bordes izquierdo y derecho (ondas suaves sin cortes) */
+.scallop-wrapper::before,
+.scallop-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 26px;
+  bottom: 26px;
+  width: 22px;
+  pointer-events: none;
+  background-repeat: repeat-y;
+  background-size: 22px 36px;
+}
+
+.scallop-wrapper::before {
+  left: -22px;
+  background-image: radial-gradient(circle at 22px 18px, var(--crema) 14px, var(--borde-oscuro) 15px, var(--borde-oscuro) 18px, transparent 19px);
+  border-radius: 18px 0 0 18px;
+}
+
+.scallop-wrapper::after {
+  right: -22px;
+  background-image: radial-gradient(circle at 0px 18px, var(--crema) 14px, var(--borde-oscuro) 15px, var(--borde-oscuro) 18px, transparent 19px);
+  border-radius: 0 18px 18px 0;
+}
+
+@media (max-width: 1220px) {
+  .scallop-wrapper::before,
+  .scallop-wrapper::after {
+    display: none;
+  }
 }
 
 /* ── LAYOUT 2 COLUMNAS (SIDEBAR + MAIN) ───────────────────────── */
@@ -1418,8 +1448,7 @@ button {
 
   .scallop-wrapper {
     padding: 16px 12px 0px;
-    border-radius: 0px;
-    outline-offset: -5px;
+    border-radius: 16px;
   }
 
   /* En móvil, el branding es compacto y centrado */
